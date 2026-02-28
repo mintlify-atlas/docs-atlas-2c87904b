@@ -1,0 +1,480 @@
+---
+title: Game Details
+description: Implementation of the comprehensive game details page with actions and screenshots
+---
+
+The game details page provides users with complete information about a game, including description, screenshots, ratings, and purchase options.
+
+## Overview
+
+The GameDetailsPage is a full-screen view that displays:
+- Header with cover image and game box art
+- Game metadata (name, platforms, rating)
+- Action buttons (Trailer, Wishlist, Rent, Buy)
+- Full description
+- Screenshot gallery
+
+## Page Structure
+
+The GameDetailsPage is implemented in `lib/page/page_game_details.dart:7-134`:
+
+```dart
+class GameDetailsPage extends StatefulWidget {
+  GameDetailsPage(this.game, {Key? key}) : super(key: key);
+
+  final Game game;
+
+  @override
+  _GameDetailsPageState createState() => _GameDetailsPageState();
+}
+
+class _GameDetailsPageState extends State<GameDetailsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(8),
+      clipBehavior: Clip.hardEdge,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            GameDetailHeader(widget.game),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(
+                          Icons.adjust,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "Rent",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .apply(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(12)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    )),
+                    backgroundColor: MaterialStateProperty.all(Colors.green),
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed))
+                          return Colors.green.shade400;
+                        return null;
+                      },
+                    ),
+                    elevation: MaterialStateProperty.all(8),
+                    shadowColor: MaterialStateProperty.all(
+                        Colors.green.shade400),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(
+                          Icons.archive,
+                          color: Colors.green,
+                        ),
+                      ),
+                      Text(
+                        "Buy",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .apply(color: Colors.green),
+                      ),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(12)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    )),
+                    side: MaterialStateProperty.all(
+                        BorderSide(color: Colors.green, width: 4)),
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed))
+                          return Colors.green.shade200;
+                        if (states.contains(MaterialState.hovered) ||
+                            states.contains(MaterialState.focused))
+                          return Colors.white70;
+                        return null;
+                      },
+                    ),
+                    elevation: MaterialStateProperty.all(0),
+                    foregroundColor: MaterialStateProperty.all(
+                        Colors.green.shade400),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                child: DescriptionText(widget.game.description)),
+            HorizontalScreenshotController(widget.game.screenshots),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+<Note>
+The page uses `SingleChildScrollView` to enable vertical scrolling through all content sections.
+</Note>
+
+## Game Detail Header
+
+The header component creates a visually striking top section with the cover image and game information (`lib/component/item_header_game.dart:8-173`):
+
+```dart
+class GameDetailHeader extends StatelessWidget {
+  GameDetailHeader(this.game);
+
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 150),
+          child: _buildDiagonalImageBackground(context),
+        ),
+        Positioned(
+          top: 26,
+          left: 4,
+          child: BackButton(color: Colors.white),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 16,
+          right: 16,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Hero(
+                  tag: game.name,
+                  child: GameBoxItem(
+                    context,
+                    game,
+                    width: 150,
+                  )),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game.name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        maxLines: 3,
+                        overflow: TextOverflow.fade,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: RatingInformation(game),
+                      ),
+                      // Action buttons (Trailer, Wishlist)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDiagonalImageBackground(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    return DiagonallyCutColoredImage(
+      FadeInImage.assetNetwork(
+        image: game.cover,
+        placeholder: "assets/placeholder_cover.jpg",
+        width: screenWidth,
+        height: 260,
+        fit: BoxFit.cover,
+      ),
+      color: const Color(0x00FFFFFF),
+    );
+  }
+}
+```
+
+### Header Layout
+
+The header uses a `Stack` to layer multiple elements:
+
+1. **Background**: Diagonal cut cover image at the top
+2. **Back Button**: Positioned at top-left for navigation
+3. **Content Row**: Game box art and metadata at the bottom
+
+<Tip>
+Using `Stack` with `Positioned` widgets allows precise control over element placement and creates depth in the design.
+</Tip>
+
+### Hero Animation Integration
+
+The game box art uses a Hero widget with the game name as the tag:
+
+```dart
+Hero(
+    tag: game.name,
+    child: GameBoxItem(
+      context,
+      game,
+      width: 150,
+    ))
+```
+
+This creates a smooth shared element transition from the browsing page.
+
+## Action Buttons
+
+The page includes four main action buttons:
+
+### Primary Actions (Trailer & Wishlist)
+
+Located in the header, styled as outlined buttons with rounded corners:
+
+```dart
+OutlinedButton(
+  onPressed: () => {},
+  child: Row(
+    children: <Widget>[
+      Icon(
+        CupertinoIcons.play_circle,
+        color: Theme.of(context)
+            .textTheme
+            .displaySmall!
+            .color,
+      ),
+      Text("Trailer",
+          style: Theme.of(context)
+              .textTheme
+              .displaySmall
+      ),
+    ],
+  ),
+  style: ButtonStyle(
+    padding: MaterialStateProperty.all(
+        const EdgeInsets.fromLTRB(6, 0, 12, 0)),
+    shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    )),
+    side: MaterialStateProperty.all(BorderSide(
+        color: Colors.black54, width: 2)),
+    backgroundColor:
+        MaterialStateProperty.all(Colors.white70),
+    elevation: MaterialStateProperty.all(0),
+  ),
+),
+```
+
+### Purchase Actions (Rent & Buy)
+
+#### Rent Button (Primary)
+
+- Green filled background with elevation
+- White icon and text
+- Prominent visual hierarchy
+- 8px elevation with green shadow
+
+#### Buy Button (Secondary)
+
+- White background with green border
+- Green icon and text
+- 4px border width for emphasis
+- No elevation (flat design)
+
+<Note>
+The contrasting button styles create clear visual hierarchy - Rent is the primary action while Buy is the secondary option.
+</Note>
+
+## Screenshot Gallery
+
+The screenshot gallery uses horizontal scrolling similar to game browsing (`lib/controller/scroll_horizontal_screenshots.dart:4-25`):
+
+```dart
+class HorizontalScreenshotController extends StatelessWidget {
+  HorizontalScreenshotController(this.screenshots);
+  final List<String> screenshots;
+
+  @override
+  Widget build(BuildContext context) {
+    const double height = 272;
+
+    return SizedBox.fromSize(
+      size: const Size.fromHeight(height),
+      child: ListView.builder(
+          itemCount: screenshots.length,
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(left: 12),
+          itemBuilder: (BuildContext context, int position) {
+            return ScreenshotContainerItem(context, screenshots[position],
+                height: height - 16);
+          }),
+    );
+  }
+}
+```
+
+### Gallery Features
+
+- Horizontal scrolling with ListView.builder
+- Fixed height for consistent layout (272px)
+- Lazy loading of screenshot images
+- Optimized performance with itemBuilder
+
+## Game Box Item
+
+The game box art component (`lib/ui/item_game_box.dart:4-31`) displays the cover:
+
+```dart
+class GameBoxItem extends StatelessWidget {
+  static const IMAGE_RATIO = 1.50;
+
+  GameBoxItem(this.buildContext, this.game, {this.width = 120});
+  final BuildContext buildContext;
+  final Game game;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    double height = IMAGE_RATIO * width;
+
+    return Material(
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.hardEdge,
+      elevation: 8,
+      shadowColor: Color(0xCC000000),
+      child: FadeInImage.assetNetwork(
+        image: game.box,
+        placeholder: "assets/placeholder_box.png",
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+```
+
+### Key Features
+
+- **Aspect Ratio**: 1:1.50 maintains consistent proportions
+- **Rounded Corners**: 4px border radius for modern look
+- **Elevation**: 8px shadow for depth
+- **Placeholder**: Smooth loading with FadeInImage
+
+<Tip>
+Using a constant aspect ratio ensures consistent layouts across different screen sizes and game box art dimensions.
+</Tip>
+
+## MaterialStateProperty
+
+The buttons use `MaterialStateProperty` for interactive states:
+
+```dart
+overlayColor: MaterialStateProperty.resolveWith<Color?>(
+  (Set<MaterialState> states) {
+    if (states.contains(MaterialState.pressed))
+      return Colors.green.shade200;
+    if (states.contains(MaterialState.hovered) ||
+        states.contains(MaterialState.focused))
+      return Colors.white70;
+    return null;
+  },
+),
+```
+
+This provides:
+- Different colors for pressed state
+- Hover effects for desktop/web
+- Focus indicators for accessibility
+
+## Layout Considerations
+
+### Full-Width Buttons
+
+```dart
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(...)
+)
+```
+
+Using `double.infinity` ensures buttons span the full width of their container.
+
+### Consistent Padding
+
+- 16px horizontal padding for content
+- 32px top padding for primary button
+- 16px spacing between buttons
+- 24px top padding for description
+
+## Best Practices
+
+### Image Loading
+
+Always use `FadeInImage.assetNetwork` for network images:
+- Provides placeholder during loading
+- Smooth fade transition when loaded
+- Better user experience than sudden image appearance
+
+### Button Styling
+
+Use `ButtonStyle` with `MaterialStateProperty` for:
+- Consistent styling across the app
+- Responsive interactive states
+- Accessibility support
+
+### Scrolling Performance
+
+The `SingleChildScrollView` with `Column` is efficient for:
+- Moderate content length
+- Mixed content types (buttons, text, galleries)
+- Simple vertical scrolling
+
+<Note>
+For very long content, consider using `ListView` with `shrinkWrap: true` for better performance.
+</Note>
+
+## Next Steps
+
+- [Hero Animations](/features/hero-animations) - Learn about the transition implementation
+- [Game Browsing](/features/game-browsing) - Understand the list view

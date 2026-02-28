@@ -1,0 +1,244 @@
+---
+title: Data Models
+description: Understanding the Game data model and data structures in Flutter Games
+---
+
+## Overview
+
+Flutter Games uses simple Dart classes to represent game data. The app has two variations of the Game model located in different directories, each serving specific use cases.
+
+## Game Model (model/game.dart)
+
+The primary Game model includes comprehensive game information with platform support:
+
+```dart
+class Game {
+  final String name;
+  final String box;
+  final String cover;
+  final String description;
+  final List<String> platforms;
+  final double rating;
+  final List<String> screenshots;
+
+  Game({
+    required this.name,
+    required this.box,
+    this.cover = '',
+    this.description = '',
+    this.platforms = const [],
+    this.rating = 0,
+    this.screenshots = const [],
+  });
+
+  String getPlatforms() {
+    String platformText = "";
+    if (platforms.length > 1) {
+      for (int i = 0; i < platforms.length; i++) {
+        if (i == 0) {
+          platformText = platforms[0];
+        } else {
+          platformText = platformText + " | " + platforms[i];
+        }
+      }
+    } else if (platforms.length == 1) {
+      platformText = platforms[0];
+    }
+
+    return platformText;
+  }
+}
+```
+
+### Properties
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `name` | String | Yes | Game title |
+| `box` | String | Yes | Path to box art image |
+| `cover` | String | No | Path to cover image (default: '') |
+| `description` | String | No | Game description (default: '') |
+| `platforms` | List&lt;String&gt; | No | Available platforms (default: []) |
+| `rating` | double | No | Game rating (default: 0) |
+| `screenshots` | List&lt;String&gt; | No | Screenshot image paths (default: []) |
+
+### Methods
+
+#### getPlatforms()
+
+Returns a formatted string of platform names separated by " | ".
+
+```dart
+Game game = Game(
+  name: "The Witcher 3",
+  box: "assets/witcher3.jpg",
+  platforms: ["PC", "PS4", "Xbox"],
+);
+
+String platforms = game.getPlatforms(); // Returns: "PC | PS4 | Xbox"
+```
+
+## Alternative Game Model (models/game.dart)
+
+An alternative Game model with pricing information:
+
+```dart
+class Game {
+  final String title;
+  final String image;
+  final double price;
+  final double rating;
+  final String description;
+  final List<String> screenshots;
+
+  Game({
+    required this.title,
+    required this.image,
+    required this.price,
+    required this.rating,
+    required this.description,
+    required this.screenshots,
+  });
+
+  static List<Game> toList() {
+    return dummyGames.map((item) {
+      return Game(
+        title: item['title'] as String,
+        image: item['image'] as String,
+        price: item['price'] as double,
+        rating: item['rating'] as double,
+        description: item['description'] as String,
+        screenshots: List<String>.from(item['screenshots'] as List),
+      );
+    }).toList();
+  }
+}
+```
+
+### Properties
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `title` | String | Yes | Game title |
+| `image` | String | Yes | Path to game image |
+| `price` | double | Yes | Game price in USD |
+| `rating` | double | Yes | Game rating (0-5) |
+| `description` | String | Yes | Detailed game description |
+| `screenshots` | List&lt;String&gt; | Yes | Screenshot image paths |
+
+### Static Methods
+
+#### toList()
+
+Converts the dummy data into a list of Game objects:
+
+```dart
+List<Game> games = Game.toList();
+```
+
+## Dummy Data Structure
+
+Sample game data is stored in `lib/utils/dummy_data.dart`:
+
+```dart
+const dummyGames = [
+  {
+    'title': 'The Witcher 3: Wild Hunt',
+    'image': 'assets/witcher3.jpg',
+    'price': 59.99,
+    'rating': 4.9,
+    'description':
+        'The Witcher 3: Wild Hunt is a 2015 action role-playing game developed and published by Polish developer CD Projekt Red and is based on The Witcher series of fantasy novels by Andrzej Sapkowski.',
+    'screenshots': [
+      'assets/witcher3_1.jpg',
+      'assets/witcher3_2.jpg',
+      'assets/witcher3_3.jpg',
+    ],
+  },
+  {
+    'title': 'Red Dead Redemption 2',
+    'image': 'assets/rdr2.jpg',
+    'price': 59.99,
+    'rating': 4.8,
+    'description':
+        'Red Dead Redemption 2 is a 2018 action-adventure game developed and published by Rockstar Games. The game is the third entry in the Red Dead series and is a prequel to the 2010 game Red Dead Redemption.',
+    'screenshots': [
+      'assets/rdr2_1.jpg',
+      'assets/rdr2_2.jpg',
+      'assets/rdr2_3.jpg',
+    ],
+  },
+];
+```
+
+## Usage Examples
+
+### Creating a Game Instance
+
+```dart
+Game game = Game(
+  name: "Cyberpunk 2077",
+  box: "assets/cyberpunk.jpg",
+  cover: "assets/cyberpunk_cover.jpg",
+  description: "An open-world RPG set in Night City",
+  platforms: ["PC", "PS5", "Xbox Series X"],
+  rating: 4.5,
+  screenshots: [
+    "assets/cyberpunk_1.jpg",
+    "assets/cyberpunk_2.jpg",
+  ],
+);
+```
+
+### Using in Components
+
+The Game model is passed to components for rendering:
+
+```dart
+class GameContainerItem extends StatelessWidget {
+  GameContainerItem(this.buildContext, this.game);
+  final BuildContext buildContext;
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: InkWell(
+        onTap: () => _goGameDetailsPage(context, game),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Hero(
+              tag: game.name,
+              child: GameBoxItem(context, game, width: 120),
+            ),
+            Text(game.name,
+                style: Theme.of(context).textTheme.headlineMedium),
+            Text(game.getPlatforms(),
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Best Practices
+
+1. **Use named parameters** for clarity when creating Game instances
+2. **Provide default values** for optional properties
+3. **Validate data** before creating Game objects in production
+4. **Use const constructors** where possible for performance
+5. **Keep models immutable** by using final properties
+
+## Future Enhancements
+
+Consider these improvements for the Game model:
+
+- Add JSON serialization/deserialization methods
+- Implement `copyWith()` method for creating modified copies
+- Add data validation in constructor
+- Implement `==` operator and `hashCode` for comparisons
+- Consider using `freezed` package for immutable data classes

@@ -1,0 +1,90 @@
+---
+title: Features Overview
+description: Comprehensive guide to the key features of Flutter Games app
+---
+
+Flutter Games is a modern mobile application for browsing, purchasing, and renting games. Built with Flutter, it showcases best practices in mobile UI/UX design and Flutter development.
+
+## Core Features
+
+The app includes several key features that demonstrate Flutter's capabilities:
+
+### Game Browsing
+
+The app provides an intuitive browsing experience with:
+- Horizontal scrollable game lists organized by categories
+- New Releases and Most Popular sections
+- Smooth scrolling performance with ListView.builder
+- Game cover art and metadata display
+
+<Note>
+The game browsing feature uses efficient list rendering to handle large game catalogs without performance issues.
+</Note>
+
+### Game Details
+
+Each game has a comprehensive details page featuring:
+- Full game information including description, platforms, and ratings
+- Screenshot gallery with horizontal scrolling
+- Action buttons for Rent and Buy operations
+- Trailer and Wishlist functionality
+
+### Hero Animations
+
+The app implements Flutter's Hero widget for seamless transitions:
+- Shared element transitions between list and detail views
+- Smooth animated game box covers during navigation
+- Professional polish to the user experience
+
+<Tip>
+Hero animations create visual continuity and help users understand the relationship between different screens.
+</Tip>
+
+### Responsive Design
+
+Built with responsive design principles:
+- Adapts to different screen sizes and orientations
+- Uses `responsive_framework` package (v1.5.1)
+- MediaQuery integration for dynamic layouts
+- Consistent experience across devices
+
+## Navigation Structure
+
+The app uses a bottom navigation bar with five main sections:
+
+1. **Games** - Main game browsing interface
+2. **Movies** - Placeholder for future movie content
+3. **Browse** - Additional browsing options
+4. **My** - User profile and account
+5. **More** - Additional settings and options
+
+## Technical Highlights
+
+### State Management
+
+The app uses StatefulWidget for managing component state and user interactions.
+
+### Material Design
+
+Implements Material Design 3 principles with:
+- Modern theming system (light and dark themes)
+- Consistent typography using Google Fonts
+- Elevated buttons, outlined buttons, and custom styling
+- Material animations and transitions
+
+### Image Handling
+
+Efficient image loading with:
+- FadeInImage for smooth image transitions
+- Placeholder images for better loading experience
+- Network image caching
+- Optimized image rendering with BoxFit
+
+## Next Steps
+
+Explore each feature in detail:
+
+- [Game Browsing](/features/game-browsing) - Learn about the browsing interface
+- [Game Details](/features/game-details) - Understand the details page implementation
+- [Hero Animations](/features/hero-animations) - Master shared element transitions
+- [Responsive Design](/features/responsive-design) - Build adaptive layouts

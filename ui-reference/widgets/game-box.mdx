@@ -1,0 +1,77 @@
+---
+title: 'GameBoxItem'
+description: 'A widget that displays a game box art with elevation and rounded corners'
+---
+
+## Overview
+
+The `GameBoxItem` widget displays a game's box art as a Material-styled card with rounded corners, elevation shadow, and a fade-in loading effect. It maintains a consistent aspect ratio and includes a placeholder image during loading.
+
+## Usage
+
+```dart
+import 'package:flutter_games/ui/item_game_box.dart';
+import 'package:flutter_games/model/game.dart';
+
+GameBoxItem(
+  context,
+  myGame,
+  width: 150,
+)
+```
+
+## Properties
+
+<ParamField path="buildContext" type="BuildContext" required>
+  The build context for the widget.
+</ParamField>
+
+<ParamField path="game" type="Game" required>
+  The game object containing the box art URL. Must include a `box` property with the image URL.
+</ParamField>
+
+<ParamField path="width" type="double" default="120">
+  The width of the game box image in logical pixels. The height is automatically calculated using the `IMAGE_RATIO` constant (1.50).
+</ParamField>
+
+## Constants
+
+<ParamField path="IMAGE_RATIO" type="double" default="1.50">
+  Static constant that defines the height-to-width ratio for the game box image.
+</ParamField>
+
+## Implementation Details
+
+The widget features:
+- **Material Design**: Uses `Material` widget with 4-pixel border radius
+- **Elevation**: 8-pixel elevation with a dark shadow (`Color(0xCC000000)`)
+- **Clipping**: Hard edge clipping for the rounded corners
+- **Progressive Loading**: `FadeInImage.assetNetwork` with a placeholder image (`assets/placeholder_box.png`)
+- **Aspect Ratio**: Height is calculated as `width * 1.50`
+- **Image Fit**: Uses `BoxFit.cover` to fill the available space
+
+## Example
+
+```dart
+final game = Game(
+  box: 'https://example.com/game-box.jpg',
+  title: 'Super Mario Bros',
+);
+
+// Default width (120)
+GameBoxItem(context, game)
+
+// Custom width
+GameBoxItem(context, game, width: 180)
+```
+
+## Visual Properties
+
+- **Border Radius**: 4 pixels
+- **Elevation**: 8
+- **Default Width**: 120 pixels
+- **Calculated Height**: width × 1.50 (e.g., 180 pixels for default width)
+
+## Source Reference
+
+Location: `lib/ui/item_game_box.dart`

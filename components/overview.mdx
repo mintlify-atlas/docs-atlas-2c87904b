@@ -1,0 +1,50 @@
+---
+title: Components Overview
+description: Reusable Flutter widgets for building game UIs in the Flutter Games app
+---
+
+The Flutter Games app provides a set of reusable components for building game-related user interfaces. These components handle common patterns like displaying game cards, ratings, headers, and screenshot galleries.
+
+## Available Components
+
+### GameCard
+
+A card widget for displaying game information in a list or grid view. Shows the game's image and title in a Material Design card layout.
+
+[Learn more about GameCard](/components/game-card)
+
+### GameDetailHeader
+
+A comprehensive header component for game detail pages. Features a diagonal background image, game box art with Hero animation, game title, rating information, and action buttons (Trailer and Wishlist).
+
+[Learn more about GameDetailHeader](/components/game-header)
+
+### RatingInformation
+
+Displays game ratings in both numeric and star formats. Shows a numeric rating value alongside a 5-star visual representation.
+
+[Learn more about RatingInformation](/components/rating-widget)
+
+### HorizontalScreenshotController
+
+A horizontally scrollable gallery for displaying game screenshots. Implements a ListView with lazy loading for efficient rendering of image collections.
+
+[Learn more about HorizontalScreenshotController](/components/screenshot-gallery)
+
+## Common Patterns
+
+### Using Game Model
+
+Most components accept a `Game` object as input. The Game model includes:
+
+- `name`: Game title
+- `box`: Box art image URL
+- `cover`: Cover image URL
+- `description`: Game description
+- `platforms`: List of platform names
+- `rating`: Numeric rating (0-5)
+- `screenshots`: List of screenshot URLs
+
+### Styling
+
+All components respect the app's theme configuration and use Material Design principles. They adapt to the current `ThemeData` for consistent styling across the app.

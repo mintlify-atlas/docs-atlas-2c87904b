@@ -1,0 +1,411 @@
+---
+title: Installation Guide
+description: Complete installation instructions for Flutter Games including environment setup, dependencies, and configuration.
+---
+
+# Installation Guide
+
+This comprehensive guide covers everything you need to set up Flutter Games, from installing Flutter to configuring your development environment.
+
+## System Requirements
+
+### Flutter SDK
+- **Minimum Version**: Flutter 3.10.0
+- **Dart Version**: 3.0.0 or higher
+
+### Operating Systems
+- macOS (10.14 or later)
+- Windows (10 or later)
+- Linux (64-bit)
+
+### Development Tools
+- Git for version control
+- An IDE: Visual Studio Code, Android Studio, or IntelliJ IDEA
+- Xcode (for iOS development on macOS)
+- Android Studio (for Android development)
+
+## Installation Steps
+
+<Steps>
+  <Step title="Install Flutter SDK">
+    If you haven't installed Flutter yet, follow the official Flutter installation guide for your operating system:
+
+    <Tabs>
+      <Tab title="macOS">
+        ```bash
+        # Download Flutter SDK
+        git clone https://github.com/flutter/flutter.git -b stable
+        
+        # Add Flutter to PATH
+        export PATH="$PATH:`pwd`/flutter/bin"
+        
+        # Verify installation
+        flutter doctor
+        ```
+      </Tab>
+
+      <Tab title="Windows">
+        1. Download the Flutter SDK from [flutter.dev](https://flutter.dev)
+        2. Extract the zip file to a desired location (e.g., `C:\src\flutter`)
+        3. Add Flutter to your PATH environment variable
+        4. Run `flutter doctor` in PowerShell or Command Prompt
+      </Tab>
+
+      <Tab title="Linux">
+        ```bash
+        # Download Flutter SDK
+        git clone https://github.com/flutter/flutter.git -b stable
+        
+        # Add Flutter to PATH (add to ~/.bashrc or ~/.zshrc)
+        export PATH="$PATH:$HOME/flutter/bin"
+        
+        # Verify installation
+        flutter doctor
+        ```
+      </Tab>
+    </Tabs>
+
+    <Note>
+    Run `flutter doctor` to check for any missing dependencies or configuration issues.
+    </Note>
+  </Step>
+
+  <Step title="Clone Flutter Games Repository">
+    Clone the project from GitHub:
+
+    ```bash
+    git clone https://github.com/searchy2/FlutterGames.git
+    cd FlutterGames
+    ```
+
+    <Info>
+    The repository includes all necessary assets, icons, and configuration files.
+    </Info>
+  </Step>
+
+  <Step title="Install Project Dependencies">
+    Install all required packages defined in `pubspec.yaml`:
+
+    ```bash
+    flutter pub get
+    ```
+
+    This installs the following dependencies:
+
+    ```yaml pubspec.yaml
+    dependencies:
+      flutter:
+        sdk: flutter
+      cupertino_icons: ^1.0.8      # iOS-style icons
+      responsive_framework: ^1.5.1  # Responsive design utilities
+      google_fonts: ^6.3.1         # Google Fonts integration
+    ```
+  </Step>
+
+  <Step title="Configure Assets">
+    The project includes pre-configured assets in the `assets/` directory:
+
+    ```yaml pubspec.yaml
+    flutter:
+      uses-material-design: true
+      assets:
+        - assets/
+    ```
+
+    Assets include:
+    - App icons for Android and iOS
+    - Game cover images
+    - Screenshot images
+
+    <Tip>
+    No additional asset configuration is needed - everything is ready to use!
+    </Tip>
+  </Step>
+
+  <Step title="Set Up Platform-Specific Configuration">
+    <Tabs>
+      <Tab title="Android">
+        The app includes launcher icon configuration:
+
+        ```yaml pubspec.yaml
+        flutter_icons:
+          android: true
+          image_path_android: "assets/Game-Controller-Logo.png"
+          adaptive_icon_background: "#FFFFFFFF"
+          adaptive_icon_foreground: "assets/Game-Controller-Logo-Adaptive.png"
+        ```
+
+        Generate icons:
+        ```bash
+        flutter pub run flutter_launcher_icons
+        ```
+      </Tab>
+
+      <Tab title="iOS">
+        The app includes iOS launcher icon configuration:
+
+        ```yaml pubspec.yaml
+        flutter_icons:
+          ios: true
+          image_path_ios: "assets/Game-Controller-Logo-iOS.png"
+        ```
+
+        Generate icons:
+        ```bash
+        flutter pub run flutter_launcher_icons
+        ```
+
+        <Note>
+        iOS development requires macOS with Xcode installed.
+        </Note>
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Verify Device Setup">
+    Check that Flutter can detect your devices:
+
+    ```bash
+    flutter devices
+    ```
+
+    You should see connected physical devices and/or emulators listed.
+
+    <AccordionGroup>
+      <Accordion title="Set up Android Emulator">
+        1. Open Android Studio
+        2. Go to Tools > AVD Manager
+        3. Create a new Virtual Device
+        4. Select a device definition and system image
+        5. Launch the emulator
+      </Accordion>
+
+      <Accordion title="Set up iOS Simulator">
+        1. Open Xcode
+        2. Go to Xcode > Open Developer Tool > Simulator
+        3. Choose a device from Hardware > Device menu
+        4. The simulator will launch automatically
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+
+  <Step title="Run the Application">
+    Launch Flutter Games on your device:
+
+    <CodeGroup>
+    ```bash Debug mode (with hot reload)
+    flutter run
+    ```
+
+    ```bash Release mode (optimized performance)
+    flutter run --release
+    ```
+
+    ```bash Specific device
+    flutter run -d <device-id>
+    ```
+
+    ```bash Web platform
+    flutter run -d chrome
+    ```
+    </CodeGroup>
+
+    <Success>
+    The app should launch with the Games page displayed and bottom navigation ready to use!
+    </Success>
+  </Step>
+</Steps>
+
+## Theme Configuration
+
+Flutter Games includes both light and dark theme support using Google Fonts:
+
+```dart lib/themes.dart
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.latoTextTheme(),
+);
+
+final darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.latoTextTheme(
+    ThemeData.dark().textTheme,
+  ),
+);
+```
+
+The app automatically switches between themes based on system settings.
+
+## Project Structure
+
+Understanding the project organization:
+
+```
+FlutterGames/
+├── lib/
+│   ├── main.dart              # App entry point
+│   ├── themes.dart            # Theme configuration
+│   ├── pages/                 # Main pages
+│   │   ├── home.dart          # Home with bottom navigation
+│   │   ├── games_page.dart    # Games listing
+│   │   ├── movies_page.dart   # Movies listing
+│   │   └── coming_soon_page.dart
+│   ├── widgets/               # Reusable UI components
+│   │   └── game_card.dart     # Game card widget
+│   ├── models/                # Data models
+│   │   └── game.dart          # Game model
+│   └── utils/                 # Utilities
+│       └── dummy_data.dart    # Sample game data
+├── assets/                    # Images and icons
+├── pubspec.yaml              # Dependencies and configuration
+└── README.md                 # Project documentation
+```
+
+## Development Environment Setup
+
+### VS Code Extensions
+
+Recommended extensions for Flutter development:
+
+- **Flutter** - Official Flutter extension
+- **Dart** - Dart language support
+- **Flutter Widget Snippets** - Code snippets for widgets
+- **Awesome Flutter Snippets** - Additional Flutter snippets
+
+### Android Studio Plugins
+
+- **Flutter Plugin** - Flutter development support
+- **Dart Plugin** - Dart language support
+
+## Build Configuration
+
+The project is configured with the following settings:
+
+```yaml pubspec.yaml
+name: flutter_games
+description: Flutter app for purchasing and renting games.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Flutter doctor shows issues">
+    Run `flutter doctor -v` for detailed diagnostics and follow the suggested fixes for any issues.
+  </Accordion>
+
+  <Accordion title="Pub get fails">
+    Try these steps:
+    1. Run `flutter clean`
+    2. Delete `pubspec.lock`
+    3. Run `flutter pub get` again
+    4. If issues persist, check your internet connection and Flutter SDK version
+  </Accordion>
+
+  <Accordion title="Build errors on iOS">
+    Ensure you have:
+    - Latest version of Xcode installed
+    - Xcode command line tools: `xcode-select --install`
+    - CocoaPods installed: `sudo gem install cocoapods`
+    - Run `pod install` in the `ios` directory
+  </Accordion>
+
+  <Accordion title="Build errors on Android">
+    Check:
+    - Android SDK is properly installed
+    - ANDROID_HOME environment variable is set
+    - Accept Android licenses: `flutter doctor --android-licenses`
+    - Gradle version compatibility
+  </Accordion>
+
+  <Accordion title="Hot reload not working">
+    - Ensure you're running in debug mode (not release)
+    - Try hot restart with `R` instead of `r`
+    - Restart the app completely
+    - Check IDE console for error messages
+  </Accordion>
+</AccordionGroup>
+
+## Performance Optimization
+
+### Release Builds
+
+For optimal performance, always test with release builds:
+
+```bash
+# Android APK
+flutter build apk --release
+
+# iOS IPA
+flutter build ios --release
+
+# Web
+flutter build web --release
+```
+
+### Build for Production
+
+<Tabs>
+  <Tab title="Android">
+    ```bash
+    # Build app bundle (recommended for Play Store)
+    flutter build appbundle --release
+    
+    # Build APK
+    flutter build apk --release --split-per-abi
+    ```
+  </Tab>
+
+  <Tab title="iOS">
+    ```bash
+    # Build for App Store
+    flutter build ipa --release
+    
+    # Or build with Xcode
+    open ios/Runner.xcworkspace
+    # Then select Product > Archive in Xcode
+    ```
+  </Tab>
+
+  <Tab title="Web">
+    ```bash
+    flutter build web --release
+    # Output will be in build/web/
+    ```
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore the Code" icon="code">
+    Dive into the source code to understand the app architecture and implementation details.
+  </Card>
+  <Card title="View Live Demo" icon="globe" href="https://gallery.codelessly.com/flutterwebsites/fluttergames/">
+    See Flutter Games in action with the online demo.
+  </Card>
+  <Card title="Customize Themes" icon="paintbrush">
+    Modify `lib/themes.dart` to customize colors, fonts, and styles.
+  </Card>
+  <Card title="Add Features" icon="plus">
+    Extend the app with new features like user authentication, payment processing, or backend integration.
+  </Card>
+</CardGroup>
+
+## Additional Resources
+
+- [Flutter Documentation](https://flutter.dev/docs)
+- [Dart Language Tour](https://dart.dev/guides/language/language-tour)
+- [Flutter Cookbook](https://flutter.dev/docs/cookbook)
+- [Responsive Framework Package](https://pub.dev/packages/responsive_framework)
+- [Google Fonts Package](https://pub.dev/packages/google_fonts)

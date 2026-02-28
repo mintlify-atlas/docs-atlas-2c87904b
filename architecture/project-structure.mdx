@@ -1,0 +1,208 @@
+---
+title: Project Structure
+description: Detailed explanation of the Flutter Games directory structure and file organization
+---
+
+## Directory Overview
+
+The Flutter Games project follows a feature-based directory structure within the `lib/` folder:
+
+```
+lib/
+├── bottom_menu_items.dart    # Bottom navigation menu definitions
+├── icons.dart                # Custom icon definitions
+├── main.dart                 # App entry point
+├── themes.dart               # Theme configurations
+├── component/                # Reusable game-specific components
+│   ├── item_description.dart
+│   ├── item_game_container.dart
+│   ├── item_header_game.dart
+│   └── item_screenshot_container.dart
+├── controller/               # Scroll controllers
+│   ├── scroll_horizontal_game.dart
+│   └── scroll_horizontal_screenshots.dart
+├── model/                    # Primary data models
+│   ├── game.dart
+│   └── repository.dart
+├── models/                   # Alternative data models
+│   └── game.dart
+├── page/                     # Legacy page implementations
+│   ├── page_coming_soon.dart
+│   ├── page_game_details.dart
+│   ├── page_games.dart
+│   ├── page_main.dart
+│   └── page_movies.dart
+├── pages/                    # Current page implementations
+│   ├── coming_soon_page.dart
+│   ├── games_page.dart
+│   ├── home.dart
+│   └── movies_page.dart
+├── ui/                       # UI-specific widgets
+│   ├── item_game_box.dart
+│   ├── item_header_diagonal.dart
+│   ├── item_image_height.dart
+│   ├── item_image_width.dart
+│   └── item_rating.dart
+├── utils/                    # Utility functions and data
+│   └── dummy_data.dart
+└── widgets/                  # Generic reusable widgets
+    └── game_card.dart
+```
+
+## Core Files
+
+### main.dart
+
+The application entry point that initializes the MaterialApp:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/pages/home.dart';
+import 'package:flutter_games/themes.dart';
+
+void main() {
+  runApp(const FlutterGames());
+}
+
+class FlutterGames extends StatelessWidget {
+  const FlutterGames({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Games',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+```
+
+### bottom_menu_items.dart
+
+Defines the bottom navigation menu structure:
+
+```dart
+enum BottomMenu {
+  games,
+  movies,
+  browse,
+  my,
+  more,
+}
+
+String menuItemName(BottomMenu layoutType) {
+  switch (layoutType) {
+    case BottomMenu.games:
+      return 'Games';
+    case BottomMenu.movies:
+      return 'Movies';
+    case BottomMenu.browse:
+      return 'Browse';
+    case BottomMenu.my:
+      return 'My Stuff';
+    case BottomMenu.more:
+      return 'More';
+    default:
+      return '';
+  }
+}
+
+IconData menuIcon(BottomMenu layoutType) {
+  switch (layoutType) {
+    case BottomMenu.games:
+      return CupertinoIcons.game_controller_solid;
+    case BottomMenu.movies:
+      return CupertinoIcons.film;
+    case BottomMenu.browse:
+      return CupertinoIcons.circle_grid_3x3_fill;
+    case BottomMenu.my:
+      return CupertinoIcons.profile_circled;
+    case BottomMenu.more:
+      return CupertinoIcons.ellipsis;
+  }
+}
+```
+
+## Directory Breakdown
+
+### /component
+
+Contains reusable UI components specific to game display:
+
+- **item_game_container.dart**: Container widget for game cards with navigation
+- **item_header_game.dart**: Header component for game sections
+- **item_description.dart**: Text description component
+- **item_screenshot_container.dart**: Container for game screenshots
+
+### /controller
+
+Houses custom scroll controllers for horizontal scrolling:
+
+- **scroll_horizontal_game.dart**: Controls horizontal game list scrolling
+- **scroll_horizontal_screenshots.dart**: Controls horizontal screenshot gallery scrolling
+
+### /model and /models
+
+Both directories contain data models. The project has two variations of the Game model:
+
+- **model/game.dart**: Contains the Game model with `name`, `box`, `cover`, `platforms`, etc.
+- **models/game.dart**: Contains an alternative Game model with `title`, `image`, `price`, `rating`, etc.
+
+### /page and /pages
+
+Both directories contain page implementations. The `/pages` directory contains the current implementation:
+
+- **home.dart**: Main navigation page with bottom navigation bar
+- **games_page.dart**: Games catalog page
+- **coming_soon_page.dart**: Upcoming games page
+- **movies_page.dart**: Movies section page
+
+### /ui
+
+Specialized UI widgets for game presentation:
+
+- **item_game_box.dart**: Game box art display
+- **item_rating.dart**: Rating display component
+- **item_image_height.dart**: Height-based image widget
+- **item_image_width.dart**: Width-based image widget
+- **item_header_diagonal.dart**: Diagonal header design
+
+### /utils
+
+Utility functions and data:
+
+- **dummy_data.dart**: Contains sample game data for development and testing
+
+### /widgets
+
+Generic reusable widgets:
+
+- **game_card.dart**: Generic game card widget
+
+## File Naming Conventions
+
+- **Pages**: `page_name.dart` or `name_page.dart`
+- **Components**: `item_component_name.dart`
+- **Controllers**: `scroll_type_name.dart`
+- **Models**: `model_name.dart`
+- **UI Widgets**: `item_widget_name.dart`
+
+## Import Organization
+
+Imports follow this order:
+
+1. Flutter framework imports
+2. Third-party package imports
+3. Local project imports
+
+Example from `component/item_game_container.dart`:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/model/game.dart';
+import "package:flutter_games/page/page_game_details.dart";
+import "package:flutter_games/ui/item_game_box.dart";
+```

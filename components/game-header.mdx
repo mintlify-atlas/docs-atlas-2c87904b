@@ -1,0 +1,188 @@
+---
+title: GameDetailHeader
+description: A comprehensive header component for game detail pages with diagonal background and interactive elements
+---
+
+The `GameDetailHeader` widget creates a visually rich header for game detail pages. It features a diagonal background image, game box art with Hero animation, rating information, and action buttons.
+
+## Widget Properties
+
+<ParamField path="game" type="Game" required>
+  The game object containing all information to display in the header. Must include name, cover, box, and rating properties.
+</ParamField>
+
+## Implementation
+
+The GameDetailHeader is implemented as a `StatelessWidget` located at `lib/component/item_header_game.dart:8`:
+
+```dart
+class GameDetailHeader extends StatelessWidget {
+  GameDetailHeader(this.game);
+
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 150),
+          child: _buildDiagonalImageBackground(context),
+        ),
+        Positioned(
+          top: 26,
+          left: 4,
+          child: BackButton(color: Colors.white),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 16,
+          right: 16,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Hero(
+                tag: game.name,
+                child: GameBoxItem(
+                  context,
+                  game,
+                  width: 150,
+                )),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game.name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        maxLines: 3,
+                        overflow: TextOverflow.fade,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: RatingInformation(game),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Row(
+                          children: [
+                            // Trailer and Wishlist buttons
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDiagonalImageBackground(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    return DiagonallyCutColoredImage(
+      FadeInImage.assetNetwork(
+        image: game.cover,
+        placeholder: "assets/placeholder_cover.jpg",
+        width: screenWidth,
+        height: 260,
+        fit: BoxFit.cover,
+      ),
+      color: const Color(0x00FFFFFF),
+    );
+  }
+}
+```
+
+## Usage Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/model/game.dart';
+import 'package:flutter_games/component/item_header_game.dart';
+
+class GameDetailPage extends StatelessWidget {
+  final Game game;
+
+  const GameDetailPage({super.key, required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            GameDetailHeader(game),
+            // Additional game details here
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Features
+
+### Diagonal Background Image
+- Uses `DiagonallyCutColoredImage` for a modern diagonal cut design
+- Displays game cover image at 260px height
+- Includes fade-in effect with placeholder image
+- Full-width responsive layout
+
+### Hero Animation
+- Game box art wrapped in Hero widget for smooth page transitions
+- Uses `game.name` as the Hero tag for matching animations
+- Fixed width of 150px for consistency
+
+### Back Button
+- Positioned at top-left (26px from top, 4px from left)
+- White color for visibility over background image
+
+### Game Information Section
+- **Game Name**: Displayed with `titleMedium` theme style, max 3 lines with fade overflow
+- **Rating**: Integrated RatingInformation widget with 8px top padding
+- **Action Buttons**: Trailer and Wishlist buttons with custom styling
+
+### Action Buttons
+
+Both buttons feature:
+- Rounded borders (30px radius)
+- Custom padding: `EdgeInsets.fromLTRB(6, 0, 12, 0)`
+- Black54 border (2px width)
+- White70 background
+- Icons from CupertinoIcons
+- Zero elevation for flat design
+
+## Layout Structure
+
+The component uses a Stack layout:
+
+1. **Background Layer**: Diagonal cover image with 150px bottom padding
+2. **Back Button**: Positioned at top-left corner
+3. **Bottom Content**: Row with game box and details
+   - Hero-wrapped game box (150px width)
+   - Expanded column with name, rating, and buttons
+
+## Game Model Requirements
+
+The `Game` object must include:
+
+- `name` (String): Game title for display and Hero tag
+- `cover` (String): URL for background cover image
+- `box` (String): URL for box art image
+- `rating` (double): Numeric rating value
+
+## Dependencies
+
+This component requires:
+- `GameBoxItem` widget from `lib/ui/item_game_box.dart`
+- `DiagonallyCutColoredImage` from `lib/ui/item_header_diagonal.dart`
+- `RatingInformation` widget from `lib/ui/item_rating.dart`

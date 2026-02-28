@@ -1,0 +1,503 @@
+---
+title: Responsive Design
+description: Building adaptive layouts that work across different screen sizes and devices
+---
+
+Flutter Games implements responsive design principles to ensure the app looks great on phones, tablets, and different screen sizes.
+
+## Overview
+
+Responsive design in Flutter involves:
+- Adapting layouts to different screen sizes
+- Using flexible widgets and constraints
+- Implementing responsive typography and spacing
+- Supporting different device orientations
+
+## Dependencies
+
+The app uses the `responsive_framework` package for enhanced responsive capabilities (`pubspec.yaml:14`):
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  responsive_framework: ^1.5.1
+  google_fonts: ^6.3.1
+```
+
+<Note>
+The responsive_framework package provides breakpoints, responsive wrappers, and utilities for building adaptive UIs.
+</Note>
+
+## MediaQuery Usage
+
+The app uses `MediaQuery` to get device dimensions and adapt layouts dynamically.
+
+### Screen Width Adaptation
+
+In the game details header (`lib/component/item_header_game.dart:158-171`):
+
+```dart
+Widget _buildDiagonalImageBackground(BuildContext context) {
+  var screenWidth = MediaQuery.of(context).size.width;
+
+  return DiagonallyCutColoredImage(
+    FadeInImage.assetNetwork(
+      image: game.cover,
+      placeholder: "assets/placeholder_cover.jpg",
+      width: screenWidth,
+      height: 260,
+      fit: BoxFit.cover,
+    ),
+    color: const Color(0x00FFFFFF),
+  );
+}
+```
+
+### Key Benefits
+
+- **Full Width**: Cover image spans entire screen width
+- **Dynamic**: Adapts to any screen size automatically
+- **Aspect Ratio**: BoxFit.cover maintains proper proportions
+
+<Tip>
+Use `MediaQuery.of(context).size` to get current screen dimensions and adapt your layouts accordingly.
+</Tip>
+
+## Flexible Layouts
+
+### Expanded Widget
+
+The game details header uses `Expanded` for flexible content (`lib/component/item_header_game.dart:41-150`):
+
+```dart
+Row(
+  crossAxisAlignment: CrossAxisAlignment.end,
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    Hero(
+        tag: game.name,
+        child: GameBoxItem(
+          context,
+          game,
+          width: 150,
+        )),
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              game.name,
+              style: Theme.of(context).textTheme.titleMedium,
+              maxLines: 3,
+              overflow: TextOverflow.fade,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: RatingInformation(game),
+            ),
+            // Action buttons...
+          ],
+        ),
+      ),
+    ),
+  ],
+)
+```
+
+### Layout Behavior
+
+- **Fixed Width**: Game box remains 150px
+- **Flexible Content**: Text and buttons expand to fill remaining space
+- **Prevents Overflow**: Content adapts to available space
+
+## ConstrainedBox
+
+The game list items use `ConstrainedBox` to limit maximum width (`lib/component/item_game_container.dart:25-40`):
+
+```dart
+ConstrainedBox(
+    constraints: const BoxConstraints(maxWidth: 120),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(game.name,
+            style: Theme.of(context).textTheme.headlineMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis),
+        Text(game.getPlatforms(),
+            style: Theme.of(context).textTheme.bodySmall,
+            maxLines: 1,
+            overflow: TextOverflow.fade),
+      ],
+    ))
+```
+
+### Purpose
+
+- **Consistent Width**: Text doesn't exceed game box width (120px)
+- **Overflow Handling**: Ellipsis and fade for long text
+- **Clean Layout**: Maintains visual alignment
+
+<Note>
+Use ConstrainedBox to set minimum or maximum dimensions while allowing content to flex within those bounds.
+</Note>
+
+## Full-Width Elements
+
+### Action Buttons
+
+The purchase buttons span the full width (`lib/page/page_game_details.dart:23-122`):
+
+```dart
+Padding(
+  padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
+  child: SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: () => {},
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Icon(
+              Icons.adjust,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Rent",
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .apply(color: Colors.white),
+          ),
+        ],
+      ),
+      style: ButtonStyle(
+        padding:
+            MaterialStateProperty.all(const EdgeInsets.all(12)),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        )),
+        backgroundColor: MaterialStateProperty.all(Colors.green),
+        elevation: MaterialStateProperty.all(8),
+      ),
+    ),
+  ),
+)
+```
+
+### Benefits
+
+- **Consistent Appearance**: Buttons always fill container width
+- **Touch Target**: Large, easy-to-tap buttons on all devices
+- **Responsive**: Adapts from small phones to large tablets
+
+## Fixed Aspect Ratios
+
+### GameBoxItem
+
+The game box maintains a consistent aspect ratio (`lib/ui/item_game_box.dart:5-29`):
+
+```dart
+class GameBoxItem extends StatelessWidget {
+  static const IMAGE_RATIO = 1.50;
+
+  GameBoxItem(this.buildContext, this.game, {this.width = 120});
+  final BuildContext buildContext;
+  final Game game;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    double height = IMAGE_RATIO * width;
+
+    return Material(
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.hardEdge,
+      elevation: 8,
+      shadowColor: Color(0xCC000000),
+      child: FadeInImage.assetNetwork(
+        image: game.box,
+        placeholder: "assets/placeholder_box.png",
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+```
+
+### Aspect Ratio Benefits
+
+- **Consistent Proportions**: All game boxes have the same shape
+- **Scalable**: Works at any size (120px in list, 150px in details)
+- **Predictable Layout**: Prevents layout shifts
+
+<Tip>
+Define aspect ratios as constants to ensure consistency across your app and make it easy to adjust if needed.
+</Tip>
+
+## Responsive Typography
+
+### Theme-Based Text Styles
+
+The app uses theme text styles that adapt to platform and user preferences:
+
+```dart
+Text(
+  game.name,
+  style: Theme.of(context).textTheme.titleMedium,
+  maxLines: 3,
+  overflow: TextOverflow.fade,
+)
+```
+
+### Typography Features
+
+- **Platform Aware**: Different fonts for iOS and Android
+- **Accessibility**: Respects user font size settings
+- **Consistent**: Same styles throughout the app
+- **Google Fonts**: Custom typography via google_fonts package
+
+## Horizontal Scrolling
+
+### List Controllers
+
+Horizontal scrolling adapts to content length (`lib/controller/scroll_horizontal_game.dart:9-21`):
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return SizedBox.fromSize(
+    size: const Size.fromHeight(240),
+    child: ListView.builder(
+        itemCount: gameItems.length,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(left: 12, top: 4),
+        itemBuilder: (BuildContext context, int position) {
+          return GameContainerItem(context, gameItems[position]);
+        }),
+  );
+}
+```
+
+### Responsive Benefits
+
+- **Content Length**: Handles any number of items
+- **Performance**: Only renders visible items
+- **Scrollable**: Natural horizontal scrolling
+- **Fixed Height**: Consistent row height (240px)
+
+## Padding and Spacing
+
+### Consistent Spacing System
+
+The app uses a consistent spacing system:
+
+```dart
+// Section headers
+padding: const EdgeInsets.fromLTRB(16, 6, 8, 8)
+
+// Content padding
+padding: const EdgeInsets.fromLTRB(16, 32, 16, 0)
+
+// Item spacing
+padding: const EdgeInsets.only(right: 12)
+
+// Horizontal lists
+padding: const EdgeInsets.only(left: 12, top: 4)
+```
+
+### Spacing Guidelines
+
+- **Base Unit**: 4px or 8px increments
+- **Horizontal Padding**: 16px for main content
+- **Vertical Spacing**: 24px-32px between sections
+- **Item Spacing**: 12px between horizontal items
+
+<Note>
+Using a consistent spacing system creates visual rhythm and makes your app feel more polished.
+</Note>
+
+## Vertical Scrolling
+
+### SingleChildScrollView
+
+Main pages use `SingleChildScrollView` for vertical scrolling:
+
+```dart
+return SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Section headers
+      HorizontalGameController(newGamesList),
+      Divider(height: 2, indent: 8),
+      // More sections...
+    ],
+  ),
+);
+```
+
+### Layout Features
+
+- **Flexible Height**: Content determines total height
+- **Mixed Content**: Text, lists, images, buttons
+- **Smooth Scrolling**: Native scroll physics
+- **Nested Scrolling**: Vertical page with horizontal lists
+
+## Best Practices
+
+### 1. Use MediaQuery Sparingly
+
+Only use MediaQuery when necessary:
+
+```dart
+// Good: For screen-width images
+var screenWidth = MediaQuery.of(context).size.width;
+
+// Better: Use flexible layouts
+Expanded(child: ...)
+Flexible(child: ...)
+```
+
+### 2. Prefer Flexible Widgets
+
+Use Flutter's built-in responsive widgets:
+
+- `Expanded` - Takes remaining space
+- `Flexible` - Flexes within available space
+- `ConstrainedBox` - Sets min/max constraints
+- `FittedBox` - Scales content to fit
+
+### 3. Set Explicit Constraints
+
+Provide clear constraints to prevent layout errors:
+
+```dart
+SizedBox.fromSize(
+  size: const Size.fromHeight(240),
+  child: ListView.builder(...),
+)
+```
+
+### 4. Handle Text Overflow
+
+Always specify overflow behavior:
+
+```dart
+Text(
+  game.name,
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+)
+```
+
+### 5. Test on Multiple Devices
+
+Test your responsive design on:
+- Different screen sizes (small, medium, large)
+- Different orientations (portrait, landscape)
+- Different platforms (iOS, Android)
+- Different pixel densities
+
+<Tip>
+Use Flutter DevTools to test different screen sizes without physical devices.
+</Tip>
+
+## Responsive Framework Package
+
+The app includes `responsive_framework` for advanced responsive features:
+
+### Potential Use Cases
+
+```dart
+// Breakpoints
+ResponsiveBreakpoints.of(context).isMobile
+ResponsiveBreakpoints.of(context).isTablet
+ResponsiveBreakpoints.of(context).isDesktop
+
+// Responsive values
+ResponsiveValue(
+  context,
+  defaultValue: 120.0,
+  conditionalValues: [
+    Condition.smallerThan(name: TABLET, value: 100.0),
+    Condition.largerThan(name: TABLET, value: 150.0),
+  ],
+)
+```
+
+<Note>
+While the responsive_framework package is included in dependencies, the current implementation primarily uses Flutter's built-in responsive widgets.
+</Note>
+
+## Common Responsive Patterns
+
+### Pattern 1: Fixed + Flexible
+
+```dart
+Row(
+  children: [
+    Container(width: 150), // Fixed
+    Expanded(child: ...), // Flexible
+  ],
+)
+```
+
+### Pattern 2: Full Width with Padding
+
+```dart
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16),
+  child: SizedBox(
+    width: double.infinity,
+    child: ...,
+  ),
+)
+```
+
+### Pattern 3: Aspect Ratio Maintenance
+
+```dart
+Widget build(BuildContext context) {
+  double height = IMAGE_RATIO * width;
+  return Container(width: width, height: height);
+}
+```
+
+### Pattern 4: Constrained Content
+
+```dart
+ConstrainedBox(
+  constraints: const BoxConstraints(maxWidth: 120),
+  child: Text(...),
+)
+```
+
+## Orientation Handling
+
+For orientation-specific layouts:
+
+```dart
+OrientationBuilder(
+  builder: (context, orientation) {
+    return orientation == Orientation.portrait
+        ? PortraitLayout()
+        : LandscapeLayout();
+  },
+)
+```
+
+## Next Steps
+
+- [Features Overview](/features/overview) - See all features
+- [Game Browsing](/features/game-browsing) - Responsive list implementation
+- [Game Details](/features/game-details) - Adaptive detail page

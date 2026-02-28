@@ -1,0 +1,83 @@
+---
+title: MoviesPage
+description: A placeholder page for future movie content in the Flutter Games application
+---
+
+# MoviesPage
+
+The `MoviesPage` is a placeholder page that will eventually display movie-related content. Currently, it shows a simple centered text label.
+
+## Overview
+
+`MoviesPage` is a stateless widget that serves as one of the three main navigation destinations in the app. It's accessible from the bottom navigation bar on the `HomePage`.
+
+## Implementation
+
+```dart
+import 'package:flutter/material.dart';
+
+class MoviesPage extends StatelessWidget {
+  const MoviesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Movies'),
+      ),
+    );
+  }
+}
+```
+
+## Current Features
+
+### Simple Layout
+
+- **Scaffold**: Provides basic page structure
+- **Centered Text**: Displays "Movies" as a placeholder
+
+### Stateless Design
+
+As a placeholder, this page doesn't require state management and is implemented as a `StatelessWidget`.
+
+## Navigation Flow
+
+```
+HomePage → MoviesPage
+          (via bottom navigation - Index 2)
+```
+
+Users access this page by tapping the "Movies" tab (with `Icons.movie` icon) in the bottom navigation bar.
+
+## File Location
+
+`lib/pages/movies_page.dart`
+
+## Future Development
+
+This page is currently a placeholder. Future implementations may include:
+
+- Movie catalog or listing
+- Movie details and information
+- Video trailers or clips
+- Movie-related game content
+- Search and filter functionality
+
+## Related Pages
+
+- [HomePage](./home-page) - The parent navigation container
+- [GamesPage](./games-page) - The games catalog page
+- [ComingSoonPage](./coming-soon-page) - Upcoming releases page
+
+## Usage Example
+
+The `MoviesPage` is accessed as the third tab (index 2) from the `HomePage` bottom navigation:
+
+```dart
+final List<Widget> _pages = [
+  const GamesPage(),
+  const ComingSoonPage(),
+  const MoviesPage(),  // Index 2 - Movies tab
+];
+```

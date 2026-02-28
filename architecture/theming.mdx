@@ -1,0 +1,276 @@
+---
+title: Theming System
+description: Understanding the theme configuration and customization in Flutter Games
+---
+
+## Overview
+
+Flutter Games implements a comprehensive theming system that supports both light and dark modes. The theme configuration uses Google Fonts for typography and Material Design colors.
+
+## Theme Configuration
+
+Themes are defined in `lib/themes.dart`:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.latoTextTheme(),
+);
+
+final darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.latoTextTheme(
+    ThemeData.dark().textTheme,
+  ),
+);
+```
+
+## Theme Integration
+
+Themes are applied in the main application widget:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/pages/home.dart';
+import 'package:flutter_games/themes.dart';
+
+void main() {
+  runApp(const FlutterGames());
+}
+
+class FlutterGames extends StatelessWidget {
+  const FlutterGames({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Games',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+```
+
+## Light Theme
+
+The light theme provides a bright, clean interface:
+
+### Properties
+
+- **Brightness**: `Brightness.light`
+- **Primary Swatch**: Blue material color
+- **Text Theme**: Lato font family from Google Fonts
+
+### Usage
+
+The light theme is automatically applied when the system is in light mode, or it can be accessed programmatically:
+
+```dart
+Color primaryColor = Theme.of(context).primaryColor;
+TextTheme textTheme = Theme.of(context).textTheme;
+```
+
+## Dark Theme
+
+The dark theme provides a comfortable viewing experience in low-light conditions:
+
+### Properties
+
+- **Brightness**: `Brightness.dark`
+- **Primary Swatch**: Blue material color
+- **Text Theme**: Lato font family adapted for dark backgrounds
+
+### Dark Mode Support
+
+The dark theme is automatically applied when:
+
+1. The system is in dark mode
+2. The user has selected dark mode in the app settings (if implemented)
+
+Flutter automatically switches between themes based on `MediaQuery.platformBrightnessOf(context)`.
+
+## Typography
+
+The app uses the Lato font family from Google Fonts for all text:
+
+```dart
+textTheme: GoogleFonts.latoTextTheme(),
+```
+
+### Text Styles
+
+Access text styles through the theme:
+
+```dart
+Text(
+  game.name,
+  style: Theme.of(context).textTheme.headlineMedium,
+)
+
+Text(
+  game.getPlatforms(),
+  style: Theme.of(context).textTheme.bodySmall,
+)
+```
+
+### Available Text Styles
+
+Material Design provides these text styles:
+
+- `displayLarge`, `displayMedium`, `displaySmall`
+- `headlineLarge`, `headlineMedium`, `headlineSmall`
+- `titleLarge`, `titleMedium`, `titleSmall`
+- `bodyLarge`, `bodyMedium`, `bodySmall`
+- `labelLarge`, `labelMedium`, `labelSmall`
+
+## Customizing Themes
+
+### Changing Colors
+
+Modify the primary color by changing the `primarySwatch`:
+
+```dart
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.purple,  // Change to purple
+  textTheme: GoogleFonts.latoTextTheme(),
+);
+```
+
+### Changing Fonts
+
+Replace Lato with a different Google Font:
+
+```dart
+import 'package:google_fonts/google_fonts.dart';
+
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.robotoTextTheme(),  // Use Roboto
+);
+```
+
+### Adding Custom Colors
+
+Extend the theme with custom colors:
+
+```dart
+final lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primarySwatch: Colors.blue,
+  textTheme: GoogleFonts.latoTextTheme(),
+  colorScheme: ColorScheme.light(
+    primary: Colors.blue,
+    secondary: Colors.orange,
+    surface: Colors.white,
+    background: Colors.grey[100]!,
+    error: Colors.red,
+  ),
+);
+```
+
+## Accessing Theme Data
+
+### In Widgets
+
+Access theme properties using `Theme.of(context)`:
+
+```dart
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final primaryColor = theme.primaryColor;
+  final textTheme = theme.textTheme;
+  
+  return Container(
+    color: primaryColor,
+    child: Text(
+      'Hello',
+      style: textTheme.headlineMedium,
+    ),
+  );
+}
+```
+
+### Checking Theme Mode
+
+Detect if dark mode is active:
+
+```dart
+bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+```
+
+## Best Practices
+
+1. **Always use theme colors** instead of hardcoded colors
+2. **Use semantic text styles** from the text theme
+3. **Test both light and dark themes** during development
+4. **Ensure sufficient contrast** in both themes
+5. **Use Theme.of(context)** to access theme properties
+
+## Common Theme Patterns
+
+### Card with Theme Colors
+
+```dart
+Card(
+  color: Theme.of(context).cardColor,
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Text(
+      'Game Title',
+      style: Theme.of(context).textTheme.titleLarge,
+    ),
+  ),
+)
+```
+
+### Button with Theme Colors
+
+```dart
+ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Theme.of(context).primaryColor,
+  ),
+  onPressed: () {},
+  child: Text('Play Now'),
+)
+```
+
+### Divider with Theme Colors
+
+```dart
+Divider(
+  color: Theme.of(context).dividerColor,
+  thickness: 1,
+)
+```
+
+## Dependencies
+
+The theming system requires the Google Fonts package:
+
+```yaml
+dependencies:
+  google_fonts: ^latest_version
+```
+
+Make sure to run `flutter pub get` after adding the dependency.
+
+## Future Enhancements
+
+Consider these improvements:
+
+- Add custom color schemes for game categories
+- Implement theme switching UI
+- Add more font options
+- Create custom ThemeExtensions for app-specific colors
+- Add animation between theme transitions

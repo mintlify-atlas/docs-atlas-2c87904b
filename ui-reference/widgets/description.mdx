@@ -1,0 +1,93 @@
+---
+title: 'DescriptionText'
+description: 'A widget that displays formatted game description text with a summary header and expand option'
+---
+
+## Overview
+
+The `DescriptionText` widget displays text content in a formatted layout with a "Summary" heading and an expandable "more" button at the bottom. It's designed to show game descriptions or other text content in a clean, organized format.
+
+## Usage
+
+```dart
+import 'package:flutter_games/component/item_description.dart';
+
+DescriptionText('This is a fascinating game with...')
+```
+
+## Properties
+
+<ParamField path="text" type="String" required>
+  The description text to display. This is shown below the "Summary" heading.
+</ParamField>
+
+## Implementation Details
+
+The widget creates a vertical column layout with three main sections:
+
+### Summary Header
+
+- Displays "Summary" as the heading
+- Styled with `headlineMedium` text style with a +2 font size delta
+- Left-aligned
+
+### Description Text
+
+- Shows the provided text content
+- 8-pixel top padding for spacing
+- Styled with `bodyMedium` text style
+- Inherits theme text styling
+
+### More Button
+
+- Right-aligned row with "more" text and down arrow icon
+- "more" text uses `displaySmall` style with theme's secondary color
+- Down arrow icon (`Icons.keyboard_arrow_down`) sized at 18 pixels
+- Icon color matches the secondary theme color
+
+<Note>
+The current implementation displays the "more" button but does not include expand/collapse functionality. The button is purely visual as noted in the source code comments.
+</Note>
+
+## Example
+
+```dart
+DescriptionText(
+  'An epic adventure game that takes you through mystical lands '
+  'filled with challenging puzzles and memorable characters.'
+)
+```
+
+## Layout Structure
+
+```
+┌─────────────────────────────┐
+│ Summary                     │
+│                             │
+│ [Description text content]  │
+│                             │
+│                        more ▼│
+└─────────────────────────────┘
+```
+
+## Styling
+
+<ParamField path="Heading" type="TextStyle">
+  `headlineMedium` with font size increased by 2
+</ParamField>
+
+<ParamField path="Body Text" type="TextStyle">
+  `bodyMedium` from the theme
+</ParamField>
+
+<ParamField path="More Button" type="TextStyle">
+  `displaySmall` with secondary theme color
+</ParamField>
+
+<ParamField path="Arrow Icon" type="Icon">
+  `Icons.keyboard_arrow_down` at 18px with secondary theme color
+</ParamField>
+
+## Source Reference
+
+Location: `lib/component/item_description.dart`

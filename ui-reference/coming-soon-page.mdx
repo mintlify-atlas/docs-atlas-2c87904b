@@ -1,0 +1,84 @@
+---
+title: ComingSoonPage
+description: A placeholder page for upcoming game releases and future content in the Flutter Games application
+---
+
+# ComingSoonPage
+
+The `ComingSoonPage` is a placeholder page designed to display upcoming game releases and future content. Currently, it shows a simple centered text label.
+
+## Overview
+
+`ComingSoonPage` is a stateless widget that serves as one of the three main navigation destinations in the app. It's accessible from the bottom navigation bar on the `HomePage`.
+
+## Implementation
+
+```dart
+import 'package:flutter/material.dart';
+
+class ComingSoonPage extends StatelessWidget {
+  const ComingSoonPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Coming Soon'),
+      ),
+    );
+  }
+}
+```
+
+## Current Features
+
+### Simple Layout
+
+- **Scaffold**: Provides basic page structure
+- **Centered Text**: Displays "Coming Soon" as a placeholder
+
+### Stateless Design
+
+As a placeholder, this page doesn't require state management and is implemented as a `StatelessWidget`.
+
+## Navigation Flow
+
+```
+HomePage → ComingSoonPage
+          (via bottom navigation - Index 1)
+```
+
+Users access this page by tapping the "Coming Soon" tab (with `Icons.new_releases` icon) in the bottom navigation bar.
+
+## File Location
+
+`lib/pages/coming_soon_page.dart`
+
+## Future Development
+
+This page is currently a placeholder. Future implementations may include:
+
+- List of upcoming game releases
+- Release dates and countdown timers
+- Pre-order or wishlist functionality
+- Notification settings for new releases
+- Teaser images and trailers
+- Game announcements and news
+
+## Related Pages
+
+- [HomePage](./home-page) - The parent navigation container
+- [GamesPage](./games-page) - The games catalog page
+- [MoviesPage](./movies-page) - Movies content page
+
+## Usage Example
+
+The `ComingSoonPage` is accessed as the second tab (index 1) from the `HomePage` bottom navigation:
+
+```dart
+final List<Widget> _pages = [
+  const GamesPage(),
+  const ComingSoonPage(),  // Index 1 - Coming Soon tab
+  const MoviesPage(),
+];
+```

@@ -1,0 +1,178 @@
+---
+title: RatingInformation
+description: Display game ratings in both numeric and star formats
+---
+
+The `RatingInformation` widget displays game ratings in a visually appealing format, combining a numeric score with a 5-star visual representation.
+
+## Widget Properties
+
+<ParamField path="game" type="Game" required>
+  The game object containing the rating value. Must include a `rating` property (0-5).
+</ParamField>
+
+## Implementation
+
+The RatingInformation widget is implemented as a `StatelessWidget` located at `lib/ui/item_rating.dart:4`:
+
+```dart
+class RatingInformation extends StatelessWidget {
+  RatingInformation(this.game);
+
+  final Game game;
+
+  _buildRatingBar(ThemeData theme) {
+    var stars = <Widget>[];
+
+    for (var i = 1; i <= 5; i++) {
+      var color =
+          i <= game.rating ? theme.colorScheme.secondary : Colors.black12;
+      var star = Icon(
+        Icons.star,
+        color: color,
+      );
+
+      stars.add(star);
+    }
+
+    return Row(children: stars);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var textTheme = theme.textTheme;
+    var ratingCaptionStyle =
+        textTheme.bodySmall!.copyWith(color: Colors.black45);
+
+    var numericRating = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          game.rating.toString(),
+          style: textTheme.headlineSmall!.copyWith(
+            fontWeight: FontWeight.w400,
+            color: theme.colorScheme.secondary,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            'Rating',
+            style: ratingCaptionStyle,
+          ),
+        ),
+      ],
+    );
+
+    var starRating = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildRatingBar(theme),
+      ],
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        numericRating,
+        Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: starRating,
+        ),
+      ],
+    );
+  }
+}
+```
+
+## Usage Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/model/game.dart';
+import 'package:flutter_games/ui/item_rating.dart';
+
+class GameInfoCard extends StatelessWidget {
+  final Game game;
+
+  const GameInfoCard({super.key, required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(game.name),
+            const SizedBox(height: 8),
+            RatingInformation(game),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Features
+
+### Numeric Rating Display
+- Large numeric value using `headlineSmall` text style
+- Font weight of 400 for readable emphasis
+- Color from theme's secondary color scheme
+- "Rating" caption below the number in bodySmall style (black45 color)
+
+### Star Rating Visualization
+- 5-star display system
+- Filled stars use theme's secondary color
+- Unfilled stars use semi-transparent black (black12)
+- Dynamic rendering based on game rating value
+- Uses Material Icons star icon
+
+### Layout
+- Horizontal row layout with 16px spacing between numeric and star sections
+- Both sections aligned to start (left)
+- Center vertical alignment for balanced appearance
+
+## Rating Logic
+
+The `_buildRatingBar` method at `lib/ui/item_rating.dart:9` implements the star rendering logic:
+
+- Iterates through numbers 1-5
+- If the iteration number is less than or equal to the game rating, the star is filled (secondary color)
+- Otherwise, the star is unfilled (black12 color)
+- All stars are rendered in a horizontal Row
+
+## Styling
+
+The component uses theme-aware styling:
+
+```dart
+var ratingCaptionStyle = textTheme.bodySmall!.copyWith(color: Colors.black45);
+```
+
+- **Numeric Rating**: `headlineSmall` with custom weight and secondary color
+- **Caption**: `bodySmall` with black45 color for subtle emphasis
+- **Stars**: Theme's secondary color for filled, black12 for empty
+
+## Game Model Requirements
+
+The `Game` object must include:
+
+- `rating` (double): Numeric rating value, typically 0-5
+
+## Visual Example
+
+For a game with rating 4.5:
+
+```
+4.5         ★ ★ ★ ★ ☆
+Rating
+```
+
+The numeric value is displayed prominently on the left, with 4 filled stars and 1 unfilled star on the right.

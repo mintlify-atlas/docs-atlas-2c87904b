@@ -1,0 +1,445 @@
+---
+title: Hero Animations
+description: Implementing smooth shared element transitions with Flutter's Hero widget
+---
+
+Hero animations create seamless transitions between screens by animating shared elements. In Flutter Games, Hero animations are used to transition game box art from the browsing list to the details page.
+
+## What are Hero Animations?
+
+Hero animations, also known as shared element transitions, create visual continuity when navigating between screens. The same element appears to "fly" from its position on one screen to another.
+
+<Tip>
+Hero animations help users understand the relationship between different views and create a more polished, professional experience.
+</Tip>
+
+## Implementation Overview
+
+The Flutter Games app implements Hero animations for game box art:
+
+1. **Source**: Game box in the browsing list
+2. **Destination**: Game box in the details header
+3. **Shared Tag**: Game name as unique identifier
+
+## Source Hero (Game List)
+
+In the game browsing list, the Hero widget wraps the game box (`lib/component/item_game_container.dart:20-23`):
+
+```dart
+class GameContainerItem extends StatelessWidget {
+  GameContainerItem(this.buildContext, this.game);
+  final BuildContext buildContext;
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: InkWell(
+        onTap: () => _goGameDetailsPage(context, game),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Hero(
+              tag: game.name,
+              child: GameBoxItem(context, game, width: 120),
+            ),
+            Padding(padding: const EdgeInsets.only(top: 6)),
+            ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 120),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(game.name,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    Text(game.getPlatforms(),
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade),
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### Key Points
+
+- **Tag**: `game.name` uniquely identifies each game
+- **Child**: `GameBoxItem` with 120px width
+- **Context**: Wrapped in InkWell for tap handling
+
+## Destination Hero (Details Page)
+
+In the game details header, another Hero widget wraps the larger game box (`lib/component/item_header_game.dart:34-40`):
+
+```dart
+class GameDetailHeader extends StatelessWidget {
+  GameDetailHeader(this.game);
+
+  final Game game;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 150),
+          child: _buildDiagonalImageBackground(context),
+        ),
+        Positioned(
+          top: 26,
+          left: 4,
+          child: BackButton(color: Colors.white),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 16,
+          right: 16,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Hero(
+                  tag: game.name,
+                  child: GameBoxItem(
+                    context,
+                    game,
+                    width: 150,
+                  )),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        game.name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        maxLines: 3,
+                        overflow: TextOverflow.fade,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: RatingInformation(game),
+                      ),
+                      // Additional content...
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+```
+
+### Key Points
+
+- **Same Tag**: `game.name` matches the source Hero
+- **Different Size**: `GameBoxItem` with 150px width
+- **Different Position**: In Stack with Positioned widget
+
+<Note>
+Flutter automatically interpolates the size, position, and other properties between the source and destination Heroes.
+</Note>
+
+## How Hero Animations Work
+
+### 1. Navigation Trigger
+
+When the user taps a game card, navigation is triggered:
+
+```dart
+void _goGameDetailsPage(BuildContext context, Game game) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (c) {
+        return GameDetailsPage(game);
+      },
+    ),
+  );
+}
+```
+
+### 2. Flutter's Hero Animation Process
+
+1. **Detection**: Flutter finds matching Hero tags in both routes
+2. **Extraction**: The Hero widget is lifted out of its original position
+3. **Animation**: Flutter animates the widget's position, size, and properties
+4. **Placement**: The widget is placed in its destination position
+
+The entire animation happens automatically - no manual animation code required!
+
+### 3. Animation Curve
+
+Flutter uses a default curve for Hero animations that provides a smooth, natural motion. The animation includes:
+
+- **Position**: From list location to header location
+- **Size**: From 120px to 150px width
+- **Layout**: Maintains aspect ratio throughout
+
+## GameBoxItem Component
+
+Both Heroes wrap the same `GameBoxItem` component (`lib/ui/item_game_box.dart:4-31`):
+
+```dart
+class GameBoxItem extends StatelessWidget {
+  static const IMAGE_RATIO = 1.50;
+
+  GameBoxItem(this.buildContext, this.game, {this.width = 120});
+  final BuildContext buildContext;
+  final Game game;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    double height = IMAGE_RATIO * width;
+
+    return Material(
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.hardEdge,
+      elevation: 8,
+      shadowColor: Color(0xCC000000),
+      child: FadeInImage.assetNetwork(
+        image: game.box,
+        placeholder: "assets/placeholder_box.png",
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+```
+
+### Design Considerations
+
+- **Consistent Widget**: Using the same component ensures smooth animation
+- **Flexible Width**: Accepts width parameter for different sizes
+- **Maintained Ratio**: Height calculated from width using constant ratio
+- **Material Properties**: Elevation and shadows animate smoothly
+
+<Tip>
+Using the exact same widget type in both Heroes ensures the smoothest possible animation.
+</Tip>
+
+## Hero Tag Requirements
+
+### Unique Tags
+
+Each Hero tag must be unique within a route:
+
+```dart
+Hero(
+  tag: game.name,  // Unique per game
+  child: GameBoxItem(...),
+)
+```
+
+### Matching Tags
+
+The source and destination Heroes must use identical tags:
+
+- Source: `tag: game.name`
+- Destination: `tag: game.name`
+
+<Note>
+If tags don't match, no Hero animation will occur, and the widgets will transition independently.
+</Note>
+
+## Best Practices
+
+### 1. Use Unique Identifiers
+
+Choose tags that uniquely identify each item:
+
+```dart
+// Good: Unique game name
+Hero(tag: game.name, ...)
+
+// Bad: Same tag for all items
+Hero(tag: "game", ...)
+```
+
+### 2. Wrap the Same Widget Type
+
+Both Heroes should wrap the same widget type for smooth animation:
+
+```dart
+// Source
+Hero(tag: game.name, child: GameBoxItem(...))
+
+// Destination
+Hero(tag: game.name, child: GameBoxItem(...))
+```
+
+### 3. Consider Material Properties
+
+Properties like elevation and shadows animate smoothly:
+
+```dart
+Material(
+  borderRadius: BorderRadius.circular(4),
+  elevation: 8,
+  shadowColor: Color(0xCC000000),
+  child: ...,
+)
+```
+
+### 4. Handle Missing Destinations
+
+If a Hero has no matching destination, Flutter gracefully falls back to standard navigation.
+
+## Common Pitfalls
+
+### Duplicate Tags
+
+Avoid using the same tag for multiple Heroes in the same route:
+
+```dart
+// Wrong: Same tag used twice
+Hero(tag: "game", child: GameBox1())
+Hero(tag: "game", child: GameBox2())
+
+// Correct: Unique tags
+Hero(tag: game1.name, child: GameBox1())
+Hero(tag: game2.name, child: GameBox2())
+```
+
+### Different Widget Types
+
+Using different widget types can cause janky animations:
+
+```dart
+// Not ideal
+Hero(tag: game.name, child: Image(...))
+Hero(tag: game.name, child: Container(child: Image(...)))
+
+// Better: Same structure
+Hero(tag: game.name, child: GameBoxItem(...))
+Hero(tag: game.name, child: GameBoxItem(...))
+```
+
+### Complex Layouts
+
+Avoid wrapping complex widget trees in Hero:
+
+```dart
+// Can cause issues
+Hero(
+  tag: game.name,
+  child: Column(
+    children: [
+      GameBox(),
+      Text(),
+      Button(),
+    ],
+  ),
+)
+
+// Better: Only wrap the animating element
+Column(
+  children: [
+    Hero(
+      tag: game.name,
+      child: GameBox(),
+    ),
+    Text(),
+    Button(),
+  ],
+)
+```
+
+<Tip>
+Keep Hero children simple and focused on the element that should animate.
+</Tip>
+
+## Custom Hero Animations
+
+For more control over Hero animations, you can customize the flight animation:
+
+```dart
+Hero(
+  tag: game.name,
+  flightShuttleBuilder: (BuildContext flightContext,
+      Animation<double> animation,
+      HeroFlightDirection flightDirection,
+      BuildContext fromHeroContext,
+      BuildContext toHeroContext) {
+    return DefaultTextStyle(
+      style: DefaultTextStyle.of(toHeroContext).style,
+      child: toHeroContext.widget,
+    );
+  },
+  child: GameBoxItem(...),
+)
+```
+
+### Use Cases for Custom Animations
+
+- Complex widgets with text that needs different styling during flight
+- Widgets that need to maintain theme data
+- Special animation curves or durations
+
+<Note>
+The Flutter Games app uses the default Hero animation, which works well for simple image transitions.
+</Note>
+
+## Performance Considerations
+
+### Efficient Animations
+
+Hero animations are highly optimized:
+- Use GPU acceleration
+- Don't rebuild surrounding widgets
+- Maintain 60fps on most devices
+
+### Image Loading
+
+Using `FadeInImage` helps with Hero animations:
+
+```dart
+FadeInImage.assetNetwork(
+  image: game.box,
+  placeholder: "assets/placeholder_box.png",
+  fit: BoxFit.cover,
+)
+```
+
+This ensures images are loaded before the animation starts.
+
+## Testing Hero Animations
+
+### Visual Testing
+
+1. Tap a game card in the list
+2. Observe the game box smoothly animate to the details page
+3. Tap the back button
+4. Observe the reverse animation back to the list
+
+### Things to Check
+
+- Animation is smooth (no jank)
+- Size transitions correctly
+- Position moves as expected
+- Shadows and elevation animate
+- No visual glitches
+
+<Tip>
+Test Hero animations on real devices to ensure smooth performance, especially with network images.
+</Tip>
+
+## Next Steps
+
+- [Game Browsing](/features/game-browsing) - See Hero animations in context
+- [Game Details](/features/game-details) - Understand the destination screen
+- [Responsive Design](/features/responsive-design) - Learn about adaptive layouts

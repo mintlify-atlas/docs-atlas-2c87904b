@@ -1,0 +1,109 @@
+---
+title: HomePage
+description: The main container page that manages bottom navigation and displays the primary sections of the Flutter Games app
+---
+
+# HomePage
+
+The `HomePage` is the root navigation container for the Flutter Games application. It implements a bottom navigation bar that allows users to switch between three main sections: Games, Coming Soon, and Movies.
+
+## Overview
+
+`HomePage` is a stateful widget that manages the selected tab index and displays the corresponding page content. It serves as the primary navigation hub for the entire application.
+
+## Implementation
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/pages/coming_soon_page.dart';
+import 'package:flutter_games/pages/games_page.dart';
+import 'package:flutter_games/pages/movies_page.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const GamesPage(),
+    const ComingSoonPage(),
+    const MoviesPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.games),
+            label: 'Games',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.new_releases),
+            label: 'Coming Soon',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.movie),
+            label: 'Movies',
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+## Key Features
+
+### State Management
+
+- **`_selectedIndex`**: Tracks the currently selected tab (0 = Games, 1 = Coming Soon, 2 = Movies)
+- **`_pages`**: List containing the three main page widgets
+
+### Bottom Navigation
+
+The `BottomNavigationBar` includes three tabs:
+
+1. **Games** - Displays the games catalog (icon: `Icons.games`)
+2. **Coming Soon** - Shows upcoming releases (icon: `Icons.new_releases`)
+3. **Movies** - Shows movie content (icon: `Icons.movie`)
+
+### Navigation Behavior
+
+When a user taps a bottom navigation item:
+1. The `onTap` callback is triggered with the selected index
+2. `setState()` updates `_selectedIndex`
+3. The corresponding page from `_pages` list is displayed in the body
+
+## Navigation Flow
+
+```
+HomePage (Root)
+├── GamesPage (Index 0) → GameDetailsPage
+├── ComingSoonPage (Index 1)
+└── MoviesPage (Index 2)
+```
+
+## File Location
+
+`lib/pages/home.dart`
+
+## Related Pages
+
+- [GamesPage](./games-page) - The games catalog page
+- [ComingSoonPage](./coming-soon-page) - Upcoming releases page
+- [MoviesPage](./movies-page) - Movies content page
+- [GameDetailsPage](./game-details-page) - Individual game details

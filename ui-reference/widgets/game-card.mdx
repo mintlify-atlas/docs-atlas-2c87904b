@@ -1,0 +1,52 @@
+---
+title: 'GameCard'
+description: 'A card widget that displays game information with an image and title'
+---
+
+## Overview
+
+The `GameCard` widget is a stateless widget that displays a game's cover image and title in a Material Design card layout. It's commonly used in grid or list views to showcase game collections.
+
+## Usage
+
+```dart
+import 'package:flutter_games/widgets/game_card.dart';
+import 'package:flutter_games/models/game.dart';
+
+GameCard(
+  game: myGame,
+)
+```
+
+## Properties
+
+<ParamField path="game" type="Game" required>
+  The game object containing information to display. Must include `image` and `title` properties.
+</ParamField>
+
+<ParamField path="key" type="Key">
+  An optional key to use for this widget.
+</ParamField>
+
+## Implementation Details
+
+The widget uses:
+- A `Card` widget with 8.0 pixel margins on all sides
+- `Image.asset` to display the game's cover image with `BoxFit.cover`
+- A `Text` widget styled with the theme's `titleLarge` text style
+- 8.0 pixel padding around the title text
+
+## Example
+
+```dart
+final game = Game(
+  title: 'The Legend of Zelda',
+  image: 'assets/zelda.png',
+);
+
+GameCard(game: game)
+```
+
+## Source Reference
+
+Location: `lib/widgets/game_card.dart`

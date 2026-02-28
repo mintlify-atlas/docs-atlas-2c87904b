@@ -1,0 +1,193 @@
+---
+title: HorizontalScreenshotController
+description: A horizontally scrollable gallery for displaying game screenshots
+---
+
+The `HorizontalScreenshotController` widget provides a performant, horizontally scrollable gallery for displaying game screenshots. It uses lazy loading for efficient rendering of large image collections.
+
+## Widget Properties
+
+<ParamField path="screenshots" type="List<String>" required>
+  A list of screenshot URLs or asset paths to display in the gallery.
+</ParamField>
+
+## Implementation
+
+The HorizontalScreenshotController is implemented as a `StatelessWidget` located at `lib/controller/scroll_horizontal_screenshots.dart:4`:
+
+```dart
+class HorizontalScreenshotController extends StatelessWidget {
+  HorizontalScreenshotController(this.screenshots);
+  final List<String> screenshots;
+
+  @override
+  Widget build(BuildContext context) {
+    const double height = 272;
+
+    return SizedBox.fromSize(
+      size: const Size.fromHeight(height),
+      child: ListView.builder(
+        itemCount: screenshots.length,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(left: 12),
+        itemBuilder: (BuildContext context, int position) {
+          return ScreenshotContainerItem(
+            context,
+            screenshots[position],
+            height: height - 16,
+          );
+        },
+      ),
+    );
+  }
+}
+```
+
+## Usage Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/controller/scroll_horizontal_screenshots.dart';
+
+class GameDetailScreen extends StatelessWidget {
+  final List<String> screenshots;
+
+  const GameDetailScreen({super.key, required this.screenshots});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Screenshots',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
+        HorizontalScreenshotController(screenshots),
+      ],
+    );
+  }
+}
+```
+
+## Features
+
+### Fixed Height Layout
+- Container height: 272px (defined at `lib/controller/scroll_horizontal_screenshots.dart:10`)
+- Screenshot items: 256px (height - 16px for padding)
+- Consistent sizing across all screenshots
+
+### Horizontal Scrolling
+- `scrollDirection: Axis.horizontal` for left-to-right scrolling
+- Smooth scrolling physics inherited from ListView
+- No scroll indicators by default
+
+### Lazy Loading
+- Uses `ListView.builder` for efficient rendering
+- Only builds visible screenshot items
+- Ideal for galleries with many screenshots
+- Reduces memory footprint and improves performance
+
+### Padding
+- Left padding: 12px for the entire list
+- Individual items have additional padding via `ScreenshotContainerItem`
+- Creates consistent spacing throughout the gallery
+
+## Screenshot Container
+
+Each screenshot is wrapped in a `ScreenshotContainerItem` (from `lib/component/item_screenshot_container.dart:4`):
+
+```dart
+class ScreenshotContainerItem extends StatelessWidget {
+  ScreenshotContainerItem(this.buildContext, this.screenshot,
+      {this.height = 400});
+  final BuildContext buildContext;
+  final String screenshot;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, right: 12, bottom: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ImageHeightItem(context, screenshot, height - 32),
+        ],
+      ),
+    );
+  }
+}
+```
+
+The container adds:
+- Top padding: 16px
+- Right padding: 12px
+- Bottom padding: 16px
+- Centers the image vertically
+
+## Performance Considerations
+
+### Lazy Loading Benefits
+- Screenshots are only rendered when visible or near the viewport
+- Reduces initial build time for large galleries
+- Lower memory usage for collections with many images
+
+### Optimization Tips
+
+1. **Image Caching**: The `ImageHeightItem` component handles image caching automatically
+2. **Placeholder Images**: Consider using `FadeInImage` for smooth loading transitions
+3. **Image Size**: Pre-optimize screenshot images to appropriate dimensions
+
+## Layout Structure
+
+The component hierarchy:
+
+1. **SizedBox**: Fixed height container (272px)
+2. **ListView.builder**: Horizontal scrollable list
+3. **ScreenshotContainerItem**: Individual screenshot wrapper
+4. **ImageHeightItem**: Image rendering component
+
+## Usage with Game Model
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/model/game.dart';
+import 'package:flutter_games/controller/scroll_horizontal_screenshots.dart';
+
+class GameScreenshotsSection extends StatelessWidget {
+  final Game game;
+
+  const GameScreenshotsSection({super.key, required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    if (game.screenshots.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Screenshots',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        HorizontalScreenshotController(game.screenshots),
+      ],
+    );
+  }
+}
+```
+
+## Dependencies
+
+This component requires:
+- `ScreenshotContainerItem` from `lib/component/item_screenshot_container.dart`
+- `ImageHeightItem` from `lib/ui/item_image_height.dart`

@@ -1,0 +1,96 @@
+---
+title: GameCard
+description: A card widget for displaying game information in lists and grids
+---
+
+The `GameCard` widget provides a simple, reusable component for displaying game information in a Material Design card. It's ideal for use in list views or grid layouts.
+
+## Widget Properties
+
+<ParamField path="game" type="Game" required>
+  The game object containing information to display. Must include `image` and `title` properties.
+</ParamField>
+
+<ParamField path="key" type="Key">
+  An optional key to use for this widget.
+</ParamField>
+
+## Implementation
+
+The GameCard is implemented as a `StatelessWidget` located at `lib/widgets/game_card.dart:4`:
+
+```dart
+class GameCard extends StatelessWidget {
+  final Game game;
+
+  const GameCard({super.key, required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Image.asset(
+            game.image,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              game.title,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+## Usage Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/models/game.dart';
+import 'package:flutter_games/widgets/game_card.dart';
+
+class GameListView extends StatelessWidget {
+  final List<Game> games;
+
+  const GameListView({super.key, required this.games});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: games.length,
+      itemBuilder: (context, index) {
+        return GameCard(game: games[index]);
+      },
+    );
+  }
+}
+```
+
+## Features
+
+- Material Design card layout with consistent margins (8.0 on all sides)
+- Game image displayed with `BoxFit.cover` for proper aspect ratio
+- Game title styled using the theme's `titleLarge` text style
+- Responsive to theme changes
+- Lightweight and performant for large lists
+
+## Layout Structure
+
+The component uses a vertical Column layout:
+
+1. **Image**: Full-width game image loaded from assets
+2. **Title**: Padded text below the image (8.0 padding on all sides)
+
+## Game Model Requirements
+
+The `Game` object passed to GameCard must include:
+
+- `image` (String): Path to the game's image asset
+- `title` (String): The game's display title

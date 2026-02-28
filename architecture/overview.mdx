@@ -1,0 +1,135 @@
+---
+title: Architecture Overview
+description: Understanding the Flutter Games app architecture and design patterns
+---
+
+## Introduction
+
+Flutter Games is built using a clean, modular architecture that separates concerns and promotes code reusability. The app follows Flutter's best practices and uses a widget-based component architecture.
+
+## Architecture Principles
+
+### Component-Based Design
+
+The application is structured around reusable UI components that encapsulate specific functionality. Each component is responsible for its own rendering logic and user interactions.
+
+### Separation of Concerns
+
+The codebase is organized into distinct layers:
+
+- **Models**: Data structures and business logic
+- **Pages**: Top-level screens and navigation
+- **Components**: Reusable UI widgets
+- **UI**: Specialized display widgets
+- **Controllers**: Scroll and interaction controllers
+- **Utils**: Helper functions and dummy data
+
+### State Management
+
+The app uses Flutter's built-in state management with `StatefulWidget` for interactive components. The main navigation is handled through a stateful `HomePage` widget.
+
+```dart
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const GamesPage(),
+    const ComingSoonPage(),
+    const MoviesPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.games),
+            label: 'Games',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.new_releases),
+            label: 'Coming Soon',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.movie),
+            label: 'Movies',
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+## Navigation
+
+The app uses Flutter's standard navigation system with `Navigator.push()` for page transitions. Hero animations are implemented for smooth visual transitions between screens.
+
+```dart
+void _goGameDetailsPage(BuildContext context, Game game) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (c) {
+        return GameDetailsPage(game);
+      },
+    ),
+  );
+}
+```
+
+## Main Application Structure
+
+The app entry point initializes the MaterialApp with theme configuration:
+
+```dart
+void main() {
+  runApp(const FlutterGames());
+}
+
+class FlutterGames extends StatelessWidget {
+  const FlutterGames({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Games',
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+```
+
+## Key Features
+
+- **Multi-page navigation** with bottom navigation bar
+- **Game catalog** with detailed game information
+- **Light/Dark theme** support
+- **Hero animations** for smooth transitions
+- **Responsive layouts** that adapt to different screen sizes
+- **Reusable components** for consistent UI patterns
+
+## Next Steps
+
+Explore the detailed documentation:
+
+- [Project Structure](/architecture/project-structure) - Detailed directory organization
+- [Data Models](/architecture/data-models) - Game model and data structures
+- [Theming](/architecture/theming) - Theme configuration and customization

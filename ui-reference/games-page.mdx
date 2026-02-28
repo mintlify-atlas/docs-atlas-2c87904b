@@ -1,0 +1,98 @@
+---
+title: GamesPage
+description: Displays a scrollable list of available games using a ListView with GameCard widgets
+---
+
+# GamesPage
+
+The `GamesPage` displays a catalog of available games in a scrollable list format. Each game is presented using a `GameCard` widget that shows game information and allows navigation to detailed game views.
+
+## Overview
+
+`GamesPage` is a stateless widget that fetches game data from the `Game` model and displays it in a `ListView.builder` for efficient rendering of potentially large lists.
+
+## Implementation
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_games/models/game.dart';
+import 'package:flutter_games/widgets/game_card.dart';
+
+class GamesPage extends StatelessWidget {
+  const GamesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final games = Game.toList();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Games'),
+      ),
+      body: ListView.builder(
+        itemCount: games.length,
+        itemBuilder: (context, index) {
+          return GameCard(game: games[index]);
+        },
+      ),
+    );
+  }
+}
+```
+
+## Key Features
+
+### App Bar
+
+The page includes a simple `AppBar` with the title "Games" to identify the current section.
+
+### Game List Display
+
+- **Data Source**: Games are retrieved using `Game.toList()` method
+- **List Rendering**: Uses `ListView.builder` for efficient, lazy-loading list construction
+- **Item Rendering**: Each game is displayed using the `GameCard` widget
+
+### Performance
+
+`ListView.builder` provides:
+- Lazy loading of list items
+- Efficient memory usage for large game catalogs
+- Smooth scrolling performance
+- Only builds visible items on screen
+
+## Navigation Flow
+
+```
+HomePage → GamesPage → GameDetailsPage
+                       (via GameCard tap)
+```
+
+Users can tap on any `GameCard` to navigate to the `GameDetailsPage` for that specific game.
+
+## File Location
+
+`lib/pages/games_page.dart`
+
+## Dependencies
+
+### Models
+- **Game**: Data model representing game information
+
+### Widgets
+- **GameCard**: Custom widget for displaying individual game cards
+
+## Related Pages
+
+- [HomePage](./home-page) - The parent navigation container
+- [GameDetailsPage](./game-details-page) - Detailed view for individual games
+
+## Usage Example
+
+The `GamesPage` is typically accessed as the default page (index 0) from the `HomePage` bottom navigation:
+
+```dart
+final List<Widget> _pages = [
+  const GamesPage(),  // Index 0 - Default view
+  const ComingSoonPage(),
+  const MoviesPage(),
+];
+```

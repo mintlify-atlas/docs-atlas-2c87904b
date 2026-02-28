@@ -1,0 +1,83 @@
+---
+title: 'RatingInformation'
+description: 'A widget that displays game rating information with numeric value and star visualization'
+---
+
+## Overview
+
+The `RatingInformation` widget displays a game's rating in two formats: a large numeric value and a visual 5-star rating bar. It uses theme colors to style the rating display and provides a clean, readable layout.
+
+## Usage
+
+```dart
+import 'package:flutter_games/ui/item_rating.dart';
+import 'package:flutter_games/model/game.dart';
+
+RatingInformation(myGame)
+```
+
+## Properties
+
+<ParamField path="game" type="Game" required>
+  The game object containing the rating information. Must include a `rating` property with a numeric value (typically 1-5).
+</ParamField>
+
+## Implementation Details
+
+The widget consists of two main sections:
+
+### Numeric Rating Display
+
+- Large numeric value styled with `headlineSmall` text style
+- Uses the theme's secondary color
+- Font weight set to 400
+- Includes "Rating" caption below in a smaller, muted style (`bodySmall` with black45 color)
+
+### Star Rating Bar
+
+- Displays 5 star icons in a row
+- Filled stars (up to the rating value) use the theme's secondary color
+- Empty stars use `Colors.black12` for a subtle appearance
+- Uses `Icons.star` from Material Icons
+
+### Layout
+
+- Horizontal row layout with 16-pixel left padding between sections
+- Both sections use vertical columns with space between elements
+- Cross-axis alignment set to center for the main row
+
+## Example
+
+```dart
+final game = Game(
+  title: 'Portal 2',
+  rating: 4,
+);
+
+RatingInformation(game)
+// Displays: "4" with 4 filled stars and 1 empty star
+```
+
+## Visual Behavior
+
+- Rating values are compared to star positions (1-5)
+- Stars at positions ≤ rating value are filled with the secondary theme color
+- Stars at positions > rating value are displayed in light gray (`Colors.black12`)
+
+## Styling
+
+<ParamField path="Numeric Rating" type="TextStyle">
+  Uses `headlineSmall` with secondary color and font weight 400
+</ParamField>
+
+<ParamField path="Rating Caption" type="TextStyle">
+  Uses `bodySmall` with `Colors.black45`
+</ParamField>
+
+<ParamField path="Star Icons" type="IconData">
+  Uses `Icons.star` with conditional coloring based on rating value
+</ParamField>
+
+## Source Reference
+
+Location: `lib/ui/item_rating.dart`

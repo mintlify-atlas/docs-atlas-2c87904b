@@ -1,0 +1,89 @@
+---
+title: Introduction to Flutter Games
+description: A beautiful Flutter app for purchasing and renting games with responsive design, hero animations, and an elegant UI.
+---
+
+# Introduction to Flutter Games
+
+Flutter Games is a demo application showcasing Flutter's capabilities for building beautiful, responsive game marketplace apps. This app demonstrates best practices for creating elegant UIs with smooth animations, hero transitions, and a delightful user experience.
+
+<CardGroup cols={2}>
+  <Card title="Responsive Design" icon="mobile">
+    Built with responsive_framework for seamless adaptation across mobile, tablet, and desktop devices.
+  </Card>
+  <Card title="Hero Animations" icon="wand-magic-sparkles">
+    Smooth shared element transitions between screens using Flutter's Hero widget for professional polish.
+  </Card>
+  <Card title="Modern UI" icon="palette">
+    Google Fonts integration with Lato typography and support for both light and dark themes.
+  </Card>
+  <Card title="Game Marketplace" icon="gamepad">
+    Browse games, view detailed information with screenshots, ratings, and pricing for purchase or rental.
+  </Card>
+</CardGroup>
+
+## What You'll Build
+
+Flutter Games includes three main sections accessible via bottom navigation:
+
+- **Games** - Browse and purchase games with detailed views including screenshots, ratings, and descriptions
+- **Coming Soon** - Preview upcoming game releases
+- **Movies** - Explore movie rentals and purchases
+
+## Key Features
+
+### Elegant Image Loading
+Flutter intelligently prioritizes visible images in scrollable lists, ensuring smooth performance and optimal loading behavior.
+
+### Custom Game Cards
+Beautifully designed game cards display:
+- High-quality cover images
+- Star ratings
+- Pricing information
+- Game titles and descriptions
+
+### Minimal Dependencies
+The app demonstrates how much can be accomplished with Flutter's built-in capabilities:
+
+```yaml lib/pubspec.yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  responsive_framework: ^1.5.1
+  google_fonts: ^6.3.1
+```
+
+## Architecture
+
+The app follows a clean architecture with organized folders:
+
+- `lib/pages/` - Main page components (home, games, movies, coming soon)
+- `lib/widgets/` - Reusable UI components like game cards
+- `lib/models/` - Data models for games and content
+- `lib/themes.dart` - Theme configuration for light and dark modes
+- `lib/utils/` - Utility functions and dummy data
+
+## Technology Stack
+
+- **Framework**: Flutter 3.10.0+
+- **Language**: Dart 3.0.0+
+- **State Management**: StatefulWidget
+- **UI Components**: Material Design
+- **Typography**: Google Fonts (Lato)
+- **Responsive Design**: Responsive Framework
+
+## License
+
+Flutter Games is open source under the BSD Zero Clause License, allowing free use, modification, and distribution.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get the app running in minutes
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    Detailed setup instructions
+  </Card>
+</CardGroup>
