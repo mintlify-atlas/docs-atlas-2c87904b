@@ -1,0 +1,100 @@
+{
+  "projectType": "saas",
+  "projectName": "Flutter Games",
+  "projectDescription": "A beautiful Flutter app for purchasing and renting games with hero animations and responsive design.",
+  "theme": "almond",
+  "primaryColor": "#4CAF50",
+  "lightColor": "#81C784",
+  "darkColor": "#388E3C",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/overview",
+              "features/game-browsing",
+              "features/game-details",
+              "features/hero-animations",
+              "features/responsive-design"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/overview",
+              "architecture/project-structure",
+              "architecture/data-models",
+              "architecture/theming"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "components/overview",
+              "components/game-card",
+              "components/game-header",
+              "components/rating-widget",
+              "components/screenshot-gallery"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "UI Reference",
+        "groups": [
+          {
+            "group": "Pages",
+            "pages": [
+              "ui-reference/home-page",
+              "ui-reference/games-page",
+              "ui-reference/game-details-page",
+              "ui-reference/movies-page",
+              "ui-reference/coming-soon-page"
+            ]
+          },
+          {
+            "group": "Widgets",
+            "pages": [
+              "ui-reference/widgets/game-card",
+              "ui-reference/widgets/game-box",
+              "ui-reference/widgets/rating",
+              "ui-reference/widgets/description"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Game browsing and details view with smooth navigation",
+    "Hero shared element transitions for seamless UI animations",
+    "Responsive design that works across mobile, web, and desktop",
+    "Game rating system with visual star display",
+    "Screenshot gallery with horizontal scrolling",
+    "Buy and rent game functionality with action buttons",
+    "Bottom navigation between Games, Movies, and Coming Soon sections",
+    "Beautiful theming with Google Fonts integration"
+  ],
+  "publicApiSurface": [
+    "Game model (title, image, price, rating, description, screenshots)",
+    "GameCard widget for displaying game previews",
+    "GameDetailsPage for full game information",
+    "GamesPage with scrollable game list",
+    "HomePage with bottom navigation",
+    "RatingInformation widget for star ratings",
+    "GameDetailHeader component with hero image",
+    "HorizontalScreenshotController for image galleries",
+    "lightTheme and darkTheme configurations"
+  ]
+}
