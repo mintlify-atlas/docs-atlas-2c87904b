@@ -1,83 +1,40 @@
 ---
 title: Game Browsing
-description: Implementation of the game browsing interface with horizontal scrollable lists
+description: Implementation of the game browsing interface with scrollable game catalog
 ---
 
-The game browsing feature provides an intuitive interface for users to discover games organized into curated collections.
+The game browsing feature provides an intuitive interface for users to discover and browse the game catalog.
 
 ## Overview
 
-The GamesPage displays games in horizontal scrollable lists, similar to modern streaming platforms. This approach maximizes content visibility while maintaining a clean, organized interface.
+The GamesPage displays games in a scrollable list format, allowing users to browse the available game collection efficiently.
 
 ## Implementation
 
 ### Main Games Page
 
-The GamesPage component is implemented in `lib/page/page_games.dart:5-71`:
+The GamesPage component is implemented in `lib/pages/games_page.dart`:
 
 ```dart
-class GamesPage extends StatefulWidget {
-  GamesPage({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+import 'package:flutter_games/models/game.dart';
+import 'package:flutter_games/widgets/game_card.dart';
 
-  @override
-  _GamesPageState createState() => _GamesPageState();
-}
+class GamesPage extends StatelessWidget {
+  const GamesPage({super.key});
 
-class _GamesPageState extends State<GamesPage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 6, 8, 8),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "New Releases",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  InkWell(
-                    onTap: () => {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: Text(
-                        "Browse All",
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                    ),
-                  ),
-                ]),
-          ),
-          HorizontalGameController(newGamesList),
-          Divider(height: 2, indent: 8),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Most Popular",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  InkWell(
-                    onTap: () => {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      child: Text(
-                        "Browse All",
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                    ),
-                  ),
-                ]),
-          ),
-          HorizontalGameController(popularGamesList),
-        ],
+    final games = Game.toList();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Games'),
+      ),
+      body: ListView.builder(
+        itemCount: games.length,
+        itemBuilder: (context, index) {
+          return GameCard(game: games[index]);
+        },
       ),
     );
   }
@@ -86,237 +43,155 @@ class _GamesPageState extends State<GamesPage> {
 
 ### Key Components
 
-#### SingleChildScrollView
+#### AppBar
 
-The page uses `SingleChildScrollView` to enable vertical scrolling through multiple game collections:
+The page includes a simple AppBar with the title "Games" to identify the current section.
 
-- Allows unlimited vertical scrolling
-- Contains multiple horizontal scrolling sections
-- Efficient memory usage with lazy loading
+#### ListView.builder
 
-#### Section Headers
-
-Each game collection has a header with:
-- Section title ("New Releases", "Most Popular")
-- "Browse All" link for accessing the full collection
-- Consistent padding and spacing
-
-<Tip>
-Using `MainAxisAlignment.spaceBetween` creates a clean header layout with the title on the left and action link on the right.
-</Tip>
-
-### Horizontal Game Controller
-
-The `HorizontalGameController` component handles the horizontal scrolling lists (`lib/controller/scroll_horizontal_game.dart:5-23`):
-
-```dart
-class HorizontalGameController extends StatelessWidget {
-  HorizontalGameController(this.gameItems);
-  final List<Game> gameItems;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox.fromSize(
-      size: const Size.fromHeight(240),
-      child: ListView.builder(
-          itemCount: gameItems.length,
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: 12, top: 4),
-          itemBuilder: (BuildContext context, int position) {
-            return GameContainerItem(context, gameItems[position]);
-          }),
-    );
-  }
-}
-```
-
-#### ListView.builder Benefits
+The page uses `ListView.builder` for efficient rendering of the game catalog:
 
 - **Performance**: Only renders visible items
 - **Memory Efficient**: Items are built on-demand
-- **Smooth Scrolling**: Optimized for horizontal scrolling
+- **Smooth Scrolling**: Optimized for vertical scrolling
 - **Dynamic Content**: Handles any number of games
 
 <Note>
-The fixed height of 240 pixels ensures consistent spacing and prevents layout shifts during scrolling.
+ListView.builder provides lazy loading, which is essential for handling potentially large game catalogs without performance degradation.
 </Note>
 
-### Game Container Item
+### GameCard Widget
 
-Each game in the list is rendered by `GameContainerItem` (`lib/component/item_game_container.dart:6-56`):
+Each game in the list is rendered by the `GameCard` widget (`lib/widgets/game_card.dart`):
 
 ```dart
-class GameContainerItem extends StatelessWidget {
-  GameContainerItem(this.buildContext, this.game);
-  final BuildContext buildContext;
+class GameCard extends StatelessWidget {
   final Game game;
+
+  const GameCard({super.key, required this.game});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12),
-      child: InkWell(
-        onTap: () => _goGameDetailsPage(context, game),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Hero(
-              tag: game.name,
-              child: GameBoxItem(context, game, width: 120),
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Image.asset(
+            game.image,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              game.title,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            Padding(padding: const EdgeInsets.only(top: 6)),
-            ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 120),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(game.name,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                    Text(game.getPlatforms(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade),
-                  ],
-                ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _goGameDetailsPage(BuildContext context, Game game) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (c) {
-          return GameDetailsPage(game);
-        },
+          ),
+        ],
       ),
     );
   }
 }
 ```
 
-### Navigation
-
-Tapping a game card navigates to the details page using `Navigator.push` with `MaterialPageRoute`. This provides:
-
-- Standard Material Design page transition
-- Back button support
-- Integration with Hero animations
+The GameCard provides a clean Material Design card layout with:
+- Game cover image
+- Game title
+- Consistent margins and padding
 
 ## Data Model
 
-The Game model (`lib/model/game.dart:1-37`) defines the structure:
+The Game model (`lib/models/game.dart`) defines the structure for the simpler implementation:
 
 ```dart
 class Game {
-  final String name;
-  final String box;
-  final String cover;
-  final String description;
-  final List<String> platforms;
+  final String title;
+  final String image;
+  final double price;
   final double rating;
+  final String description;
   final List<String> screenshots;
 
   Game({
-    required this.name,
-    required this.box,
-    this.cover = '',
-    this.description = '',
-    this.platforms = const [],
-    this.rating = 0,
-    this.screenshots = const [],
+    required this.title,
+    required this.image,
+    required this.price,
+    required this.rating,
+    required this.description,
+    required this.screenshots,
   });
 
-  String getPlatforms() {
-    String platformText = "";
-    if (platforms.length > 1) {
-      for (int i = 0; i < platforms.length; i++) {
-        if (i == 0) {
-          platformText = platforms[0];
-        } else {
-          platformText = platformText + " | " + platforms[i];
-        }}
-    } else if (platforms.length == 1) {
-      platformText = platforms[0];
-    }
-    return platformText;
+  static List<Game> toList() {
+    return dummyGames.map((item) {
+      return Game(
+        title: item['title'] as String,
+        image: item['image'] as String,
+        price: item['price'] as double,
+        rating: item['rating'] as double,
+        description: item['description'] as String,
+        screenshots: List<String>.from(item['screenshots'] as List),
+      );
+    }).toList();
   }
 }
 ```
 
-<Note>
-The `getPlatforms()` method formats multiple platforms with a pipe separator (e.g., "XBOX ONE | PS4").
-</Note>
+The `toList()` static method converts dummy data into a list of Game objects for display.
 
-## Game Collections
+## Dummy Data
 
-Games are organized into collections in `lib/model/repository.dart`:
+Games are defined in `lib/utils/dummy_data.dart`:
 
 ```dart
-final List<Game> newGamesList = [
-  seaofthieves,
-  detroitbh,
-  shadowcolossus,
-  agentsofmayhem,
-  mgsurvive
-];
-
-final List<Game> popularGamesList = [
-  codww2,
-  fallout4,
-  fc5,
-  pvzgw2,
-  riseoftr
+const dummyGames = [
+  {
+    'title': 'The Witcher 3: Wild Hunt',
+    'image': 'assets/witcher3.jpg',
+    'price': 59.99,
+    'rating': 4.9,
+    'description': 'The Witcher 3: Wild Hunt is a 2015 action role-playing game...',
+    'screenshots': [
+      'assets/witcher3_1.jpg',
+      'assets/witcher3_2.jpg',
+      'assets/witcher3_3.jpg',
+    ],
+  },
+  // More games...
 ];
 ```
 
 ## Best Practices
 
-### Text Overflow Handling
+### Material Design Cards
 
-The implementation uses appropriate overflow strategies:
+The GameCard uses Material Design Card widget for consistent styling:
+- Automatic elevation and shadows
+- Rounded corners
+- Consistent margins
 
-```dart
-Text(game.name,
-    style: Theme.of(context).textTheme.headlineMedium,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis),
-```
+### Image Display
 
-- `TextOverflow.ellipsis` for game names (shows "...")
-- `TextOverflow.fade` for platform text (gradual fade)
+Game cover images use `Image.asset` with `BoxFit.cover` to:
+- Fill the available space
+- Maintain aspect ratio
+- Crop excess content appropriately
 
-### ConstrainedBox Usage
+### Typography
 
-```dart
-ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 120),
-    child: Column(...)
-)
-```
-
-This ensures text content doesn't exceed the game box width, maintaining a clean layout.
-
-### Spacing and Padding
-
-Consistent spacing creates visual rhythm:
-- 12px right padding between game items
-- 6px top padding after game box
-- 16px left padding for section headers
+The implementation uses theme typography for consistent text styling:
+- `textTheme.titleLarge` for game titles
+- Automatic color and font family from theme
 
 <Tip>
-Use consistent spacing values throughout your app to create a cohesive design system.
+Using theme styles ensures your app maintains visual consistency and makes theming changes easier.
 </Tip>
 
 ## Performance Considerations
 
-1. **ListView.builder**: Only builds visible widgets
-2. **const constructors**: Reduces widget rebuilds
-3. **Image caching**: Network images are automatically cached
-4. **Fixed heights**: Prevents layout recalculations
+1. **ListView.builder**: Only builds visible widgets, not the entire list upfront
+2. **const constructors**: The `const GamesPage()` constructor reduces unnecessary rebuilds
+3. **Asset images**: Local asset images load quickly and are cached automatically
+4. **Lazy loading**: Games are only rendered as they scroll into view
 
 ## Next Steps
 
